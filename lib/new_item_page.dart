@@ -10,7 +10,36 @@ class NewItemPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("New item"),
       ),
-      body: Text("hi"),
+      body: Container(
+        padding: EdgeInsets.fromLTRB(8, 8, 8, 32),
+        child: Column(
+          spacing: 8,
+          children: [
+            TextField(
+              decoration: InputDecoration(labelText: "Name"),
+              onSubmitted: (value) {},
+            ),
+            Expanded(
+              child: TextField(
+                maxLines: null,
+                expands: true,
+                decoration: InputDecoration(
+                  labelText: "Content",
+                  alignLabelWithHint: true,
+                ),
+                onSubmitted: (value) {},
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(onPressed: () {}, child: Text("Discard")),
+                ElevatedButton(onPressed: () {}, child: Text("Save")),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
