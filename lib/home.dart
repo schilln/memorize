@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -51,10 +52,27 @@ class _MyHomePageState extends State<HomePage> {
     );
   }
 
-  Dismissible buildItem(int index) {
-    return Dismissible(
+  Slidable buildItem(int index) {
+    return Slidable(
       key: ValueKey(_items[index]),
-      onDismissed: (direction) => _removeItem(index),
+      endActionPane: ActionPane(
+        motion: ScrollMotion(),
+        dismissible: DismissiblePane(onDismissed: () => _removeItem(index)),
+        children: [
+          SlidableAction(
+            onPressed: (context) {},
+            icon: Icons.edit,
+            backgroundColor: Colors.green,
+          ),
+          /* TODO: An undo button would be good. Maybe a pop-up requesting
+          confirmation but that would probably be annoying. */
+          SlidableAction(
+            onPressed: (context) => _removeItem(index),
+            icon: Icons.delete,
+            backgroundColor: Colors.red,
+          ),
+        ],
+      ),
       child: ListTile(title: _items[index]),
     );
   }
