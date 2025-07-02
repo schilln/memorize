@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:memorize/item.dart';
 
 class NewItemPage extends StatelessWidget {
-  const NewItemPage({super.key});
+  final Item _item;
+
+  const NewItemPage(this._item, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +32,16 @@ class _ItemFormState extends State<ItemForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
-        child: Column(
-          spacing: 8,
-          children: [
+      child: Column(
+        spacing: 8,
+        children: [
           TextFormField(
-              decoration: InputDecoration(labelText: "Name"),
+            decoration: InputDecoration(labelText: "Name"),
             onSaved: (value) {},
-            ),
-            ContentTextBox(),
-            ButtonRow(),
-          ],
+          ),
+          ContentTextBox(),
+          ButtonRow(),
+        ],
       ),
     );
   }

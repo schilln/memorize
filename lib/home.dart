@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:memorize/item.dart';
 import 'package:memorize/new_item_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,11 +13,11 @@ class HomePage extends StatefulWidget {
 class _MyHomePageState extends State<HomePage> {
   int _counter = 0;
 
-  final List<Text> _items = [];
+  final List<Item> _items = [];
 
   void _addItem() {
     setState(() {
-      _items.add(Text(_counter.toString()));
+      _items.add(Item("some-name-$_counter", "some-content"));
       _counter++;
     });
   }
@@ -63,7 +64,9 @@ class _MyHomePageState extends State<HomePage> {
             onPressed: (context) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NewItemPage()),
+                MaterialPageRoute(
+                  builder: (context) => NewItemPage(_items[index]),
+                ),
               );
             },
             icon: Icons.edit,
@@ -78,7 +81,18 @@ class _MyHomePageState extends State<HomePage> {
           ),
         ],
       ),
-      child: ListTile(title: _items[index]),
+      child: ListTile(title: ItemWidget(_items[index])),
     );
+  }
+}
+
+class ItemWidget extends StatelessWidget {
+  final Item item;
+
+  const ItemWidget(this.item, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(spacing: 8, children: [Text(item.name), Text(item.content)]);
   }
 }
