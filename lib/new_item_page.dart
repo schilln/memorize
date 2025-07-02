@@ -50,6 +50,8 @@ class ContentTextBox extends StatelessWidget {
 class ButtonRow extends StatelessWidget {
   const ButtonRow({super.key});
 
+  static const _padding = 8;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -58,13 +60,16 @@ class ButtonRow extends StatelessWidget {
         ElevatedButton(
           onPressed: () {},
           child: Row(
-            spacing: 8,
+            spacing: _padding.toDouble(),
             children: [Icon(Icons.delete), Text("Discard")],
           ),
         ),
         ElevatedButton(
           onPressed: () {},
-          child: Row(spacing: 8, children: [Icon(Icons.save), Text("Save")]),
+          child: Row(
+            spacing: _padding.toDouble(),
+            children: [Icon(Icons.save_alt), Text("Save and exit")],
+          ),
         ),
       ],
     );
