@@ -40,11 +40,7 @@ class _MyHomePageState extends State<HomePage> {
             : ListView.builder(
                 padding: const EdgeInsets.all(8),
                 itemCount: _items.length,
-                itemBuilder: (context, index) => Dismissible(
-                  key: ValueKey(_items[index]),
-                  onDismissed: (direction) => _removeItem(index),
-                  child: ListTile(title: _items[index]),
-                ),
+                itemBuilder: (context, index) => buildItem(index),
               ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -52,6 +48,14 @@ class _MyHomePageState extends State<HomePage> {
         tooltip: 'Add item',
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Dismissible buildItem(int index) {
+    return Dismissible(
+      key: ValueKey(_items[index]),
+      onDismissed: (direction) => _removeItem(index),
+      child: ListTile(title: _items[index]),
     );
   }
 }
