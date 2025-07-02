@@ -15,31 +15,40 @@ class NewItemPage extends StatelessWidget {
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(8, 8, 8, 32),
-        child: ItemForm(),
+        child: ItemForm(_item),
       ),
     );
   }
 }
 
 class ItemForm extends StatefulWidget {
-  const ItemForm({super.key});
+  final Item _item;
+
+  const ItemForm(this._item, {super.key});
 
   @override
   State<ItemForm> createState() => _ItemFormState();
 }
 
 class _ItemFormState extends State<ItemForm> {
+  final _nameController = TextEditingController();
+  final _contentController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    _nameController.text = widget._item.name;
+    _contentController.text = widget._item.content;
+
     return Form(
       child: Column(
         spacing: 8,
         children: [
           TextFormField(
+            controller: _nameController,
             decoration: InputDecoration(labelText: "Name"),
             onSaved: (value) {},
           ),
-          ContentTextBox(),
+          ContentTextBox(_contentController),
           ButtonRow(),
         ],
       ),
@@ -48,12 +57,15 @@ class _ItemFormState extends State<ItemForm> {
 }
 
 class ContentTextBox extends StatelessWidget {
-  const ContentTextBox({super.key});
+  final TextEditingController _controller;
+
+  const ContentTextBox(this._controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: TextFormField(
+        controller: _controller,
         maxLines: null,
         expands: true,
         decoration: InputDecoration(
