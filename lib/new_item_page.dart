@@ -33,8 +33,20 @@ class NewItemPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(onPressed: () {}, child: Text("Discard")),
-                ElevatedButton(onPressed: () {}, child: Text("Save")),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Row(
+                    spacing: 8,
+                    children: [Icon(Icons.delete), Text("Discard")],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Row(
+                    spacing: 8,
+                    children: [Icon(Icons.save), Text("Save")],
+                  ),
+                ),
               ],
             ),
           ],
