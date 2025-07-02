@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<HomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  final List<Text> _items = [];
+
+  void _addItem() {
     setState(() {
+      _items.add(Text(_counter.toString()));
       _counter++;
+    });
+  }
+
+  void _removeItem(int index) {
+    setState(() {
+      _items.removeAt(index);
+      _counter--;
     });
   }
 
@@ -23,23 +31,25 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text("Items"),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+        // child: Text(_counter.toString()),
+        child: _items.isEmpty
+            ? Text("No items yet")
+            : ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: _items.length,
+                itemBuilder: (context, index) => Dismissible(
+                  key: ValueKey(_items[index]),
+                  onDismissed: (direction) => _removeItem(index),
+                  child: ListTile(title: _items[index]),
+                ),
+              ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: _addItem,
+        tooltip: 'Add item',
         child: const Icon(Icons.add),
       ),
     );
