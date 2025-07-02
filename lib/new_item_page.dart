@@ -19,39 +19,54 @@ class NewItemPage extends StatelessWidget {
               decoration: InputDecoration(labelText: "Name"),
               onSubmitted: (value) {},
             ),
-            Expanded(
-              child: TextField(
-                maxLines: null,
-                expands: true,
-                decoration: InputDecoration(
-                  labelText: "Content",
-                  alignLabelWithHint: true,
-                ),
-                onSubmitted: (value) {},
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Row(
-                    spacing: 8,
-                    children: [Icon(Icons.delete), Text("Discard")],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Row(
-                    spacing: 8,
-                    children: [Icon(Icons.save), Text("Save")],
-                  ),
-                ),
-              ],
-            ),
+            ContentTextBox(),
+            ButtonRow(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class ContentTextBox extends StatelessWidget {
+  const ContentTextBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: TextField(
+        maxLines: null,
+        expands: true,
+        decoration: InputDecoration(
+          labelText: "Content",
+          alignLabelWithHint: true,
+        ),
+        onSubmitted: (value) {},
+      ),
+    );
+  }
+}
+
+class ButtonRow extends StatelessWidget {
+  const ButtonRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton(
+          onPressed: () {},
+          child: Row(
+            spacing: 8,
+            children: [Icon(Icons.delete), Text("Discard")],
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {},
+          child: Row(spacing: 8, children: [Icon(Icons.save), Text("Save")]),
+        ),
+      ],
     );
   }
 }
