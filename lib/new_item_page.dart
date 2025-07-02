@@ -12,17 +12,33 @@ class NewItemPage extends StatelessWidget {
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(8, 8, 8, 32),
+        child: ItemForm(),
+      ),
+    );
+  }
+}
+
+class ItemForm extends StatefulWidget {
+  const ItemForm({super.key});
+
+  @override
+  State<ItemForm> createState() => _ItemFormState();
+}
+
+class _ItemFormState extends State<ItemForm> {
+  @override
+  Widget build(BuildContext context) {
+    return Form(
         child: Column(
           spacing: 8,
           children: [
-            TextField(
+          TextFormField(
               decoration: InputDecoration(labelText: "Name"),
-              onSubmitted: (value) {},
+            onSaved: (value) {},
             ),
             ContentTextBox(),
             ButtonRow(),
           ],
-        ),
       ),
     );
   }
@@ -34,14 +50,14 @@ class ContentTextBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: TextField(
+      child: TextFormField(
         maxLines: null,
         expands: true,
         decoration: InputDecoration(
           labelText: "Content",
           alignLabelWithHint: true,
         ),
-        onSubmitted: (value) {},
+        onSaved: (value) {},
       ),
     );
   }
@@ -58,14 +74,18 @@ class ButtonRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () => Navigator.pop(context),
           child: Row(
             spacing: _padding.toDouble(),
-            children: [Icon(Icons.delete), Text("Discard")],
+            children: [Icon(Icons.delete), Text("Discard changes")],
           ),
         ),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            FormState form = Form.of(context);
+            form.validate();
+            form.save();
+          },
           child: Row(
             spacing: _padding.toDouble(),
             children: [Icon(Icons.save_alt), Text("Save and exit")],
