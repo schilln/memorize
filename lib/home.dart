@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:memorize/new_item_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,7 +36,6 @@ class _MyHomePageState extends State<HomePage> {
         title: Text("Items"),
       ),
       body: Center(
-        // child: Text(_counter.toString()),
         child: _items.isEmpty
             ? Text("No items yet")
             : ListView.builder(
@@ -60,7 +60,12 @@ class _MyHomePageState extends State<HomePage> {
         dismissible: DismissiblePane(onDismissed: () => _removeItem(index)),
         children: [
           SlidableAction(
-            onPressed: (context) {},
+            onPressed: (context) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NewItemPage()),
+              );
+            },
             icon: Icons.edit,
             backgroundColor: Colors.green,
           ),
