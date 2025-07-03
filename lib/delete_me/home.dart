@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:memorize/item.dart';
-import 'package:memorize/new_item_page.dart';
+import 'package:memorize/delete_me/item.dart';
+import 'package:memorize/delete_me/new_item_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

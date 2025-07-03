@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memorize/item.dart';
+import 'package:memorize/delete_me/item.dart';
 
 class NewItemPage extends StatelessWidget {
   final Item _item;
