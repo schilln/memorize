@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:memorize/delete_me/item.dart';
-import 'package:memorize/delete_me/new_item_page.dart';
+
+import '../delete_me/item.dart';
+import '../delete_me/new_item_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,7 +18,7 @@ class _MyHomePageState extends State<HomePage> {
 
   void _addItem() {
     setState(() {
-      _items.add(Item("some-name-$_counter", "some-content"));
+      _items.add(Item('some-name-$_counter', 'some-content'));
       _counter++;
     });
   }
@@ -34,11 +35,11 @@ class _MyHomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Items"),
+        title: Text('Items'),
       ),
       body: Center(
         child: _items.isEmpty
-            ? Text("No items yet")
+            ? Text('No items yet')
             : ListView.builder(
                 padding: const EdgeInsets.all(8),
                 itemCount: _items.length,
