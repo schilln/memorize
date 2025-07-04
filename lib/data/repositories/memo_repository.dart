@@ -5,7 +5,7 @@ import '../../domain/models/memo/memo.dart';
 class MemoRepository {
   MemoRepository();
 
-  final _memos = List<Memo>.empty(growable: true);
+  final List<Memo> _memos = [];
   int _sequentialId = 0;
 
   Result<List<Memo>> getMemos() {
