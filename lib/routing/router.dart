@@ -1,11 +1,15 @@
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../ui/editor/view_models/editor_viewmodel.dart';
+import '../ui/editor/widgets/editor_screen.dart';
 import '../ui/home/view_models/home_viewmodel.dart';
 import '../ui/home/widgets/home_screen.dart';
 import 'routes.dart';
 
-GoRouter router() => GoRouter(
+GoRouter get router => _router;
+
+final GoRouter _router = GoRouter(
   initialLocation: Routes.home,
   routes: [
     GoRoute(
@@ -15,6 +19,14 @@ GoRouter router() => GoRouter(
           viewModel: HomeViewModel(memoRepository: context.read()),
         );
       },
+      routes: [
+        GoRoute(
+          path: Routes.editor,
+          builder: (context, state) {
+            return EditorScreen(viewModel: EditorViewmodel());
+          },
+        ),
+      ],
     ),
   ],
 );
