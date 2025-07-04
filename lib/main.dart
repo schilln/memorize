@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'config/dependencies.dart';
 import 'routing/router.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MultiProvider(providers: providersLocal, child: const MainApp()));
 }
 
 class MainApp extends StatelessWidget {
