@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../domain/models/memo/memo.dart';
+import '../../../routing/routes.dart';
 import '../../../ui/home/view_models/home_viewmodel.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -48,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: widget.viewModel.createMemo.call,
+        onPressed: () => context.go(Routes.editor),
         tooltip: 'Add item',
         child: const Icon(Icons.add),
       ),
