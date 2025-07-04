@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memorize/item.dart';
+import '../delete_me/item.dart';
 
 class NewItemPage extends StatelessWidget {
   final Item _item;
@@ -11,7 +11,7 @@ class NewItemPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("New item"),
+        title: Text('New item'),
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(8, 8, 8, 32),
@@ -45,7 +45,7 @@ class _ItemFormState extends State<ItemForm> {
         children: [
           TextFormField(
             controller: _nameController,
-            decoration: InputDecoration(labelText: "Name"),
+            decoration: InputDecoration(labelText: 'Name'),
             onSaved: (value) {},
           ),
           ContentTextBox(_contentController),
@@ -69,7 +69,7 @@ class ContentTextBox extends StatelessWidget {
         maxLines: null,
         expands: true,
         decoration: InputDecoration(
-          labelText: "Content",
+          labelText: 'Content',
           alignLabelWithHint: true,
         ),
         onSaved: (value) {},
@@ -92,7 +92,7 @@ class ButtonRow extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
           child: Row(
             spacing: _padding.toDouble(),
-            children: [Icon(Icons.delete), Text("Discard changes")],
+            children: [Icon(Icons.delete), Text('Discard changes')],
           ),
         ),
         ElevatedButton(
@@ -103,7 +103,7 @@ class ButtonRow extends StatelessWidget {
           },
           child: Row(
             spacing: _padding.toDouble(),
-            children: [Icon(Icons.save_alt), Text("Save and exit")],
+            children: [Icon(Icons.save_alt), Text('Save and exit')],
           ),
         ),
       ],
