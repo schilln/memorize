@@ -10,13 +10,13 @@ class HomeViewModel extends ChangeNotifier {
     : _memoRepository = memoRepository {
     load = Command.createSyncNoParam(_load, initialValue: Success.unit())
       ..execute();
-    createMemo = Command.createSyncNoParam(
-      _createMemo,
-      initialValue: Success.unit(),
-    );
   }
   late Command<void, Result<void>> load;
-  late Command<void, Result<void>> createMemo;
+
+  late final Command<void, Result<void>> createMemo = Command.createSyncNoParam(
+    _createMemo,
+    initialValue: Success.unit(),
+  );
 
   final MemoRepository _memoRepository;
   List<Memo> _memos = [];
