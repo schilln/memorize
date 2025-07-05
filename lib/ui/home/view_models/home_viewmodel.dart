@@ -35,11 +35,12 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Result<void> createMemo({required String name, required String content}) {
-    var command = _createMemoCommand(name: name, content: content)..execute();
+    var command = _makeCreateMemoCommand(name: name, content: content)
+      ..execute();
     return command.value;
   }
 
-  Command<void, Result<void>> _createMemoCommand({
+  Command<void, Result<void>> _makeCreateMemoCommand({
     required String name,
     required String content,
   }) {
@@ -58,11 +59,11 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Result<void> deleteMemo({required int id}) {
-    var command = _deleteMemoCommand(id: id)..execute();
+    var command = _makeDeleteMemoCommand(id: id)..execute();
     return command.value;
   }
 
-  Command<void, Result<void>> _deleteMemoCommand({required int id}) {
+  Command<void, Result<void>> _makeDeleteMemoCommand({required int id}) {
     return Command.createSyncNoParam(
       () => _deleteMemo(id: id),
       initialValue: Failure(CommandNotExecutedException()),
