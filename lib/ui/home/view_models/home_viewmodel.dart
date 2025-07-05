@@ -28,8 +28,8 @@ class HomeViewModel extends ChangeNotifier {
   List<Memo> _memos = [];
   UnmodifiableListView<Memo> get memos => UnmodifiableListView(_memos);
 
-  final StackCollection<CommandFuture<void, Result<int>, int>>
-  _commandFutureStack = StackCollection();
+  final StackCollection<CommandFuture<void, Result<void>, Memo>>
+  _deleteCommandFutureStack = StackCollection();
 
   Result<void> _load() {
     try {
@@ -43,16 +43,15 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  void undoCreate() async {
-    var (:command, :future) = _commandFutureStack.pop();
+  void undoDelete() async {
+    var (:command, :future) = _deleteCommandFutureStack.pop();
     await future;
     command.undo();
   }
 
   Result<int> createMemo({required String name, required String content}) {
     var command = _makeCreateMemoCommand(name: name, content: content);
-    var future = command.executeWithFuture();
-    _commandFutureStack.push((command: command, future: future));
+    command.execute();
     return command.value;
   }
 
@@ -66,7 +65,8 @@ class HomeViewModel extends ChangeNotifier {
           initialValue: Failure(CommandNotExecutedException()),
           undo: (UndoStack<int> undoStack, reason) async {
             var id = undoStack.pop();
-            return _deleteMemo(id: id);
+            _deleteMemo(id: id);
+            return Success(id);
           },
           undoOnExecutionFailure: false,
         )
@@ -74,14 +74,14 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Result<int> _createMemo({
-    required UndoStack<int> undoStack,
+    UndoStack<int>? undoStack,
     required String name,
     required String content,
   }) {
     try {
       var id = _memoRepository.createMemo(name: name, content: content);
       return id.fold((success) {
-        undoStack.push(success);
+        undoStack?.push(success);
         return id;
       }, (e) => Failure(e));
     } finally {
@@ -89,21 +89,36 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Result<int> deleteMemo({required int id}) {
+  Result<void> deleteMemo({required int id}) {
     var command = _makeDeleteMemoCommand(id: id)..execute();
+    var future = command.executeWithFuture();
+    _deleteCommandFutureStack.push((command: command, future: future));
     return command.value;
   }
 
-  Command<void, Result<int>> _makeDeleteMemoCommand({required int id}) {
-    return Command.createSyncNoParam(
-      () => _deleteMemo(id: id),
-      initialValue: Failure(CommandNotExecutedException()),
-    );
+  UndoableCommand<void, Result<void>, Memo> _makeDeleteMemoCommand({
+    required int id,
+  }) {
+    return Command.createUndoableNoParam<Result<void>, Memo>(
+          (UndoStack<Memo> undoStack) async =>
+              _deleteMemo(undoStack: undoStack, id: id),
+          initialValue: Failure(CommandNotExecutedException()),
+          undo: (UndoStack<Memo> undoStack, reason) async {
+            var memo = undoStack.pop();
+            return _createMemo(name: memo.name, content: memo.content);
+          },
+          undoOnExecutionFailure: false,
+        )
+        as UndoableCommand<void, Result<void>, Memo>;
   }
 
-  Result<int> _deleteMemo({required int id}) {
+  Result<void> _deleteMemo({UndoStack<Memo>? undoStack, required int id}) {
     try {
-      return _memoRepository.deleteMemo(id);
+      var memo = _memoRepository.deleteMemo(id);
+      return memo.fold((success) {
+        undoStack?.push(success);
+        return Success(success.id);
+      }, (e) => Failure(e));
     } finally {
       notifyListeners();
     }
