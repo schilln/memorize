@@ -16,18 +16,23 @@ class HomeViewModel extends ChangeNotifier {
       initialValue: Failure(CommandNotExecutedException()),
     )..execute();
   }
-  late Command<void, Result<void>> load;
+  late final Command<void, Result<void>> load;
 
-  late final Command<({String name, String content}), Result<void>> createMemo =
-      Command.createSync(
-        _createMemo,
-        initialValue: Failure(CommandNotExecutedException()),
-      );
+  Command<void, Result<void>> createMemoCommand({
+    required String name,
+    required String content,
+  }) {
+    return Command.createSyncNoParam(
+      () => _createMemo(name: name, content: content),
+      initialValue: Failure(CommandNotExecutedException()),
+    );
+  }
 
   late final Command<int, Result<void>> deleteMemo = Command.createSync(
     _deleteMemo,
     initialValue: Failure(CommandNotExecutedException()),
   );
+  int _counter = 0;
 
   final MemoRepository _memoRepository;
   List<Memo> _memos = [];
@@ -45,14 +50,15 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Result<void> _createMemo(({String name, String content}) params) {
+  Result<void> _createMemo({required String name, required String content}) {
     try {
       return _memoRepository.createMemo(
-        name: params.name,
-        content: params.content,
+        name: '$name $_counter',
+        content: content,
       );
     } finally {
       notifyListeners();
+      _counter++;
     }
   }
 
