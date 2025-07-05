@@ -51,10 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          widget.viewModel.createMemo.execute((
-            name: 'a name',
-            content: 'some content',
-          ));
+          widget.viewModel
+              .createMemoCommand(name: 'a name', content: 'some content')
+              .execute();
         },
         // onPressed: () => context.go(Routes.editor),
         tooltip: 'Add item',
@@ -122,10 +121,9 @@ void _deleteMemoWithSnackBar(
       content: const Text('Memo deleted'),
       action: SnackBarAction(
         label: 'Undo',
-        onPressed: () => viewModel.createMemo.execute((
-          name: memo.name,
-          content: memo.content,
-        )),
+        onPressed: () => viewModel
+            .createMemoCommand(name: memo.name, content: memo.content)
+            .execute(),
       ),
     ),
   );
