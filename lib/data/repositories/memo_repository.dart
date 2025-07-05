@@ -28,20 +28,20 @@ class MemoRepository {
     }
   }
 
-  Result<void> createMemo({required String name, required String content}) {
+  Result<int> createMemo({required String name, required String content}) {
     try {
       final memo = Memo(id: _sequentialId++, name: name, content: content);
       _memos[memo.id] = memo;
-      return Success.unit();
+      return Success(memo.id);
     } on Exception catch (e) {
       return Failure(e);
     }
   }
 
-  Result<void> deleteMemo(int id) {
+  Result<int> deleteMemo(int id) {
     try {
       _memos.remove(id);
-      return Success.unit();
+      return Success(id);
     } on Exception catch (e) {
       return Failure(e);
     }
