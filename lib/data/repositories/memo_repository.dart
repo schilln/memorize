@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:result_dart/result_dart.dart';
 
 import '../../domain/models/memo/memo.dart';
@@ -5,12 +7,13 @@ import '../../domain/models/memo/memo.dart';
 class MemoRepository {
   MemoRepository();
 
-  final List<Memo> _memos = [];
+  final Map<int, Memo> _memos = {};
   int _sequentialId = 0;
 
-  Result<List<Memo>> getMemos() {
+  Result<UnmodifiableListView<Memo>> getMemos() {
     try {
-      return Success(_memos);
+      final result = UnmodifiableListView(_memos.values);
+      return Success(result);
     } on Exception catch (e) {
       return Failure(e);
     }
@@ -18,16 +21,26 @@ class MemoRepository {
 
   Result<Memo> getMemo(int id) {
     try {
-      return Success(_memos[id]);
+      Memo? result = _memos[id];
+      return result == null ? Failure(Exception()) : Success(result);
     } on Exception catch (e) {
       return Failure(e);
     }
   }
 
-  Result<void> createMemo(Memo memo) {
+  Result<void> createMemo({required String name, required String content}) {
     try {
-      final memoWithId = memo.copyWith(id: _sequentialId++);
-      _memos.add(memoWithId);
+      final memo = Memo(id: _sequentialId++, name: name, content: content);
+      _memos[memo.id] = memo;
+      return Success.unit();
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
+  Result<void> deleteMemo(int id) {
+    try {
+      _memos.remove(id);
       return Success.unit();
     } on Exception catch (e) {
       return Failure(e);

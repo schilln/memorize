@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../domain/models/memo/memo.dart';
@@ -44,13 +45,18 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           child: ListenableBuilder(
             listenable: widget.viewModel,
-            builder: (context, child) =>
-                MemosList(memos: widget.viewModel.memos),
+            builder: (context, child) => MemosList(viewModel: widget.viewModel),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go(Routes.editor),
+        onPressed: () {
+          widget.viewModel.createMemo.execute((
+            name: 'a name',
+            content: 'some content',
+          ));
+        },
+        // onPressed: () => context.go(Routes.editor),
         tooltip: 'Add item',
         child: const Icon(Icons.add),
       ),
@@ -59,24 +65,68 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class MemosList extends StatelessWidget {
-  const MemosList({super.key, required this.memos});
+  const MemosList({super.key, required this.viewModel});
 
-  final List<Memo> memos;
+  final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: memos.length,
-      itemBuilder: (context, index) {
-        final memo = memos[index];
-        return Container(
-          padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-          child: Row(
-            spacing: 8,
-            children: [Text(memo.name), Text(memo.content)],
-          ),
-        );
-      },
+      itemCount: viewModel.memos.length,
+      itemBuilder: (context, index) =>
+          memoSlider(viewModel, viewModel.memos[index]),
     );
   }
+}
+
+Slidable memoSlider(HomeViewModel viewModel, Memo memo) {
+  return Slidable(
+    key: ValueKey(memo),
+    endActionPane: ActionPane(
+      motion: ScrollMotion(),
+      dismissible: Builder(
+        builder: (context) => DismissiblePane(
+          onDismissed: () => _deleteMemoWithSnackBar(viewModel, memo, context),
+        ),
+      ),
+      children: [
+        SlidableAction(
+          onPressed: (context) {
+            context.go(Routes.editor);
+          },
+          icon: Icons.edit,
+          backgroundColor: Colors.green,
+        ),
+        SlidableAction(
+          onPressed: (context) =>
+              _deleteMemoWithSnackBar(viewModel, memo, context),
+          icon: Icons.delete,
+          backgroundColor: Colors.red,
+        ),
+      ],
+    ),
+    child: ListTile(
+      title: Row(spacing: 8, children: [Text(memo.name), Text(memo.content)]),
+    ),
+  );
+}
+
+void _deleteMemoWithSnackBar(
+  HomeViewModel viewModel,
+  Memo memo,
+  BuildContext context,
+) {
+  viewModel.deleteMemo.execute(memo.id);
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text('Memo deleted'),
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () => viewModel.createMemo.execute((
+          name: memo.name,
+          content: memo.content,
+        )),
+      ),
+    ),
+  );
 }
