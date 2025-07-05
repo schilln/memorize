@@ -50,10 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        // For testing that the memo is created and then removed:
-        // add the following after `createMemo`.
-        // await Future.delayed(Duration(seconds: 1));
-        // widget.viewModel.undoCreate();
         onPressed: () => widget.viewModel.createMemo(
           name: 'a name',
           content: 'some content',
@@ -124,8 +120,7 @@ void _deleteMemoWithSnackBar(
       content: const Text('Memo deleted'),
       action: SnackBarAction(
         label: 'Undo',
-        onPressed: () =>
-            viewModel.createMemo(name: memo.name, content: memo.content),
+        onPressed: () => viewModel.undoDelete(),
       ),
     ),
   );

@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:result_dart/result_dart.dart';
 
+import '../../../utils/exceptions/base.dart';
 import '../../domain/models/memo/memo.dart';
 
 class MemoRepository {
@@ -38,10 +39,10 @@ class MemoRepository {
     }
   }
 
-  Result<int> deleteMemo(int id) {
+  Result<Memo> deleteMemo(int id) {
     try {
-      _memos.remove(id);
-      return Success(id);
+      var memo = _memos.remove(id);
+      return memo != null ? Success(memo) : Failure(KeyNotFoundException());
     } on Exception catch (e) {
       return Failure(e);
     }
