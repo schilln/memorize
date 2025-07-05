@@ -2,11 +2,11 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_command/flutter_command.dart';
-import 'package:memorize/utils/exceptions/command.dart';
 import 'package:result_dart/result_dart.dart';
 
 import '../../../data/repositories/memo_repository.dart';
 import '../../../domain/models/memo/memo.dart';
+import '../../../utils/exceptions/command.dart';
 import '../../../utils/stack_collection.dart';
 
 typedef CommandFuture<TParam, TResult, TUndoState> = ({
