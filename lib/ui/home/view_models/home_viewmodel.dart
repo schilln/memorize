@@ -18,11 +18,6 @@ class HomeViewModel extends ChangeNotifier {
   }
   late final Command<void, Result<void>> load;
 
-  late final Command<int, Result<void>> deleteMemo = Command.createSync(
-    _deleteMemo,
-    initialValue: Failure(CommandNotExecutedException()),
-  );
-
   final MemoRepository _memoRepository;
   List<Memo> _memos = [];
   UnmodifiableListView<Memo> get memos => UnmodifiableListView(_memos);
@@ -62,7 +57,19 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Result<void> _deleteMemo(int id) {
+  Result<void> deleteMemo({required int id}) {
+    var command = _deleteMemoCommand(id: id)..execute();
+    return command.value;
+  }
+
+  Command<void, Result<void>> _deleteMemoCommand({required int id}) {
+    return Command.createSyncNoParam(
+      () => _deleteMemo(id: id),
+      initialValue: Failure(CommandNotExecutedException()),
+    );
+  }
+
+  Result<void> _deleteMemo({required int id}) {
     try {
       return _memoRepository.deleteMemo(id);
     } finally {
