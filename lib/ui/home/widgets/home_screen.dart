@@ -114,7 +114,7 @@ void _deleteMemoWithSnackBar(
   Memo memo,
   BuildContext context,
 ) {
-  viewModel.deleteMemo.execute(memo.id);
+  viewModel.deleteMemo(id: memo.id);
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: const Text('Memo deleted'),
