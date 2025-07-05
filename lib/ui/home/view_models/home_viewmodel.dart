@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_command/flutter_command.dart';
+import 'package:memorize/utils/exceptions/command.dart';
 import 'package:result_dart/result_dart.dart';
 
 import '../../../data/repositories/memo_repository.dart';
@@ -8,19 +11,27 @@ import '../../../domain/models/memo/memo.dart';
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel({required MemoRepository memoRepository})
     : _memoRepository = memoRepository {
-    load = Command.createSyncNoParam(_load, initialValue: Success.unit())
-      ..execute();
+    load = Command.createSyncNoParam(
+      _load,
+      initialValue: Failure(CommandNotExecutedException()),
+    )..execute();
   }
   late Command<void, Result<void>> load;
 
-  late final Command<void, Result<void>> createMemo = Command.createSyncNoParam(
-    _createMemo,
-    initialValue: Success.unit(),
+  late final Command<({String name, String content}), Result<void>> createMemo =
+      Command.createSync(
+        _createMemo,
+        initialValue: Failure(CommandNotExecutedException()),
+      );
+
+  late final Command<int, Result<void>> deleteMemo = Command.createSync(
+    _deleteMemo,
+    initialValue: Failure(CommandNotExecutedException()),
   );
 
   final MemoRepository _memoRepository;
   List<Memo> _memos = [];
-  List<Memo> get memos => _memos;
+  UnmodifiableListView<Memo> get memos => UnmodifiableListView(_memos);
 
   Result<void> _load() {
     try {
@@ -34,9 +45,20 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Result<void> _createMemo() {
+  Result<void> _createMemo(({String name, String content}) params) {
     try {
-      return _memoRepository.createMemo(Memo(name: 'Name', content: 'Content'));
+      return _memoRepository.createMemo(
+        name: params.name,
+        content: params.content,
+      );
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Result<void> _deleteMemo(int id) {
+    try {
+      return _memoRepository.deleteMemo(id);
     } finally {
       notifyListeners();
     }
