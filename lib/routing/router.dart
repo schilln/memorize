@@ -21,7 +21,7 @@ final GoRouter _router = GoRouter(
       },
       routes: [
         GoRoute(
-          path: Routes.editor,
+          path: Routes.editorRelative,
           builder: (context, state) {
             return EditorScreen(viewModel: EditorViewmodel());
           },
