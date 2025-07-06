@@ -59,7 +59,7 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Result<void> deleteMemo({required int id}) {
-    var command = _makeDeleteMemoCommand(id: id)..execute();
+    var command = _makeDeleteMemoCommand(id: id);
     var future = command.executeWithFuture();
     _deleteCommandFutureStack.push((command: command, future: future));
     return command.value;
