@@ -112,9 +112,31 @@ class MemoSlider extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        title: Row(
-          spacing: 8,
-          children: [Text(_memo.name), Text(_memo.content)],
+        title: LayoutBuilder(
+          builder: (final context, final constraints) => Row(
+            spacing: 16,
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth * 0.8,
+                ),
+                child: Text(
+                  _memo.name,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  _memo.content.replaceAll('\n', ' \u2022 '),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
