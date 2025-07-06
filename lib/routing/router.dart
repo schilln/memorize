@@ -23,7 +23,9 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: Routes.editorRelative,
           builder: (context, state) {
-            return EditorScreen(viewModel: EditorViewmodel());
+            return EditorScreen(
+              viewModel: EditorViewmodel(memoRepository: context.read()),
+            );
           },
         ),
       ],
