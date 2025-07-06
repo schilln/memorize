@@ -97,7 +97,7 @@ class MemoSlider extends StatelessWidget {
           SlidableAction(
             onPressed: (context) {
               ScaffoldMessenger.of(context).clearSnackBars();
-              context.push(Routes.editor);
+              context.push('${Routes.editor}/${_memo.id}');
             },
             icon: Icons.edit,
             backgroundColor: Colors.green,

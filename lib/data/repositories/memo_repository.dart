@@ -47,4 +47,22 @@ class MemoRepository {
       return Failure(e);
     }
   }
+
+  Result<int> updateMemo({
+    required int id,
+    required String name,
+    required String content,
+  }) {
+    try {
+      if (_memos.containsKey(id)) {
+        final memo = Memo(id: id, name: name, content: content);
+        _memos[memo.id] = memo;
+        return Success(memo.id);
+      } else {
+        return Failure(KeyNotFoundException());
+      }
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
 }
