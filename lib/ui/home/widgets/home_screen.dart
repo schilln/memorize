@@ -116,40 +116,43 @@ class MemoSlider extends StatelessWidget {
           ),
         ],
       ),
-      child: Card(
-        color: _index.isOdd
-            ? Theme.of(context).colorScheme.primaryContainer
-            : Theme.of(context).colorScheme.secondaryFixedDim,
-        elevation: 1,
-        margin: EdgeInsets.fromLTRB(2, 2, 2, 2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(2),
-        ),
-        child: ListTile(
-          title: LayoutBuilder(
-            builder: (final context, final constraints) => Row(
-              spacing: 16,
-              children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: constraints.maxWidth * 0.8,
+      child: GestureDetector(
+        onTap: () => context.push(Routes.memorize(_memo.id)),
+        child: Card(
+          color: _index.isOdd
+              ? Theme.of(context).colorScheme.primaryContainer
+              : Theme.of(context).colorScheme.secondaryFixedDim,
+          elevation: 1,
+          margin: EdgeInsets.fromLTRB(2, 2, 2, 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(2),
+          ),
+          child: ListTile(
+            title: LayoutBuilder(
+              builder: (final context, final constraints) => Row(
+                spacing: 16,
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth * 0.8,
+                    ),
+                    child: Text(
+                      _memo.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
                   ),
-                  child: Text(
-                    _memo.name,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  Expanded(
+                    child: Text(
+                      _memo.content.replaceAll('\n', ' \u2022 '),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Text(
-                    _memo.content.replaceAll('\n', ' \u2022 '),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
