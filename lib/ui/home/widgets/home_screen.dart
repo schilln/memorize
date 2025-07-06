@@ -6,16 +6,11 @@ import '../../../domain/models/memo/memo.dart';
 import '../../../routing/routes.dart';
 import '../../../ui/home/view_models/home_viewmodel.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.viewModel});
 
   final HomeViewModel viewModel;
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,13 +20,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child: ListenableBuilder(
-          listenable: widget.viewModel.load,
+          listenable: viewModel.load,
           builder: (context, child) {
-            if (widget.viewModel.load.isExecutingSync.value) {
+            if (viewModel.load.isExecutingSync.value) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (widget.viewModel.load.value.isError()) {
+            if (viewModel.load.value.isError()) {
               return const Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -44,16 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
             return child!;
           },
           child: ListenableBuilder(
-            listenable: widget.viewModel,
-            builder: (context, child) => MemosList(viewModel: widget.viewModel),
+            listenable: viewModel,
+            builder: (context, child) => MemosList(viewModel: viewModel),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => widget.viewModel.createMemo(
-          name: 'a name',
-          content: 'some content',
-        ),
+        onPressed: () =>
+            viewModel.createMemo(name: 'a name', content: 'some content'),
         // onPressed: () => context.go(Routes.editor),
         tooltip: 'Add item',
         child: const Icon(Icons.add),
