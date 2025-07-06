@@ -4,5 +4,5 @@ import 'package:provider/single_child_widget.dart';
 import '../data/repositories/memo_repository.dart';
 
 List<SingleChildWidget> get providersLocal {
-  return [Provider(create: (context) => MemoRepository())];
+  return [Provider(create: (final context) => MemoRepository())];
 }

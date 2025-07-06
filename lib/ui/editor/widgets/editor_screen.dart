@@ -10,7 +10,7 @@ class EditorScreen extends StatelessWidget {
   final EditorViewmodel viewModel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -27,7 +27,7 @@ class EditorScreen extends StatelessWidget {
 }
 
 class ItemForm extends StatelessWidget {
-  ItemForm({super.key, required viewModel})
+  ItemForm({super.key, required final viewModel})
     : _viewModel = viewModel,
       _nameController = viewModel.nameController,
       _contentController = viewModel.contentController;
@@ -38,7 +38,7 @@ class ItemForm extends StatelessWidget {
   final TextEditingController _contentController;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Form(
       child: Column(
         spacing: 8,
@@ -46,7 +46,7 @@ class ItemForm extends StatelessWidget {
           TextFormField(
             controller: _nameController,
             decoration: InputDecoration(labelText: 'Name'),
-            onSaved: (value) {},
+            onSaved: (final value) {},
           ),
           ContentTextBox(_contentController),
           ButtonRow(viewModel: _viewModel),
@@ -62,7 +62,7 @@ class ContentTextBox extends StatelessWidget {
   const ContentTextBox(this._controller, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Expanded(
       child: TextFormField(
         controller: _controller,
@@ -72,7 +72,7 @@ class ContentTextBox extends StatelessWidget {
           labelText: 'Content',
           alignLabelWithHint: true,
         ),
-        onSaved: (value) {},
+        onSaved: (final value) {},
       ),
     );
   }
@@ -86,7 +86,7 @@ class ButtonRow extends StatelessWidget {
   static const _padding = 8;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -100,9 +100,9 @@ class ButtonRow extends StatelessWidget {
         ElevatedButton(
           onPressed: () async {
             final result = await viewModel.save();
-            result.fold((success) {
+            result.fold((final success) {
               if (context.mounted) context.go(Routes.home);
-            }, (e) {});
+            }, (final e) {});
 
             // FormState form = Form.of(context);
             // form.validate();

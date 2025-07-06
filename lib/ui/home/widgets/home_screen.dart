@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
   final HomeViewModel viewModel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
         child: Center(
           child: ListenableBuilder(
             listenable: viewModel.load,
-            builder: (context, child) {
+            builder: (final context, final child) {
               if (viewModel.load.isExecutingSync.value) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -41,7 +41,8 @@ class HomeScreen extends StatelessWidget {
             },
             child: ListenableBuilder(
               listenable: viewModel,
-              builder: (context, child) => MemosList(viewModel: viewModel),
+              builder: (final context, final child) =>
+                  MemosList(viewModel: viewModel),
             ),
           ),
         ),
@@ -64,17 +65,17 @@ class MemosList extends StatelessWidget {
   final HomeViewModel viewModel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return ListView.builder(
       itemCount: viewModel.memos.length,
-      itemBuilder: (context, index) =>
+      itemBuilder: (final context, final index) =>
           MemoSlider(viewModel: viewModel, memo: viewModel.memos[index]),
     );
   }
 }
 
 class MemoSlider extends StatelessWidget {
-  const MemoSlider({super.key, required viewModel, required memo})
+  const MemoSlider({super.key, required final viewModel, required final memo})
     : _viewModel = viewModel,
       _memo = memo;
 
@@ -82,20 +83,20 @@ class MemoSlider extends StatelessWidget {
   final Memo _memo;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Slidable(
       key: ValueKey(_memo),
       endActionPane: ActionPane(
         motion: ScrollMotion(),
         dismissible: Builder(
-          builder: (context) => DismissiblePane(
+          builder: (final context) => DismissiblePane(
             onDismissed: () =>
                 _deleteMemoWithSnackBar(_viewModel, _memo, context),
           ),
         ),
         children: [
           SlidableAction(
-            onPressed: (context) {
+            onPressed: (final context) {
               ScaffoldMessenger.of(context).clearSnackBars();
               context.push('${Routes.editor}/${_memo.id}');
             },
@@ -103,7 +104,7 @@ class MemoSlider extends StatelessWidget {
             backgroundColor: Colors.green,
           ),
           SlidableAction(
-            onPressed: (context) =>
+            onPressed: (final context) =>
                 _deleteMemoWithSnackBar(_viewModel, _memo, context),
             icon: Icons.delete,
             backgroundColor: Colors.red,
@@ -121,9 +122,9 @@ class MemoSlider extends StatelessWidget {
 }
 
 void _deleteMemoWithSnackBar(
-  HomeViewModel viewModel,
-  Memo memo,
-  BuildContext context,
+  final HomeViewModel viewModel,
+  final Memo memo,
+  final BuildContext context,
 ) {
   viewModel.deleteMemo(id: memo.id);
   ScaffoldMessenger.of(context).showSnackBar(
