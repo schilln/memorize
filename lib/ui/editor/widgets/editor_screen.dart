@@ -89,9 +89,29 @@ class ButtonRow extends StatelessWidget {
         ElevatedButton(
           onPressed: () async {
             final result = await viewModel.save();
-            result.fold((final success) {
-              if (context.mounted) context.go(Routes.home);
-            }, (final e) {});
+            result.fold(
+              (final success) {
+                if (context.mounted) context.go(Routes.home);
+              },
+              (final e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        e.toString(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                      ),
+                      duration: Duration(milliseconds: 1500),
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.errorContainer,
+                    ),
+                  );
+                }
+              },
+            );
           },
           child: Row(
             spacing: _padding.toDouble(),
