@@ -17,7 +17,7 @@ typedef CommandFuture<TParam, TResult, TUndoState> = ({
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel({required MemoRepository memoRepository})
     : _memoRepository = memoRepository {
-    load = Command.createSyncNoParam(
+    load = Command.createSyncNoParam<Result<void>>(
       _load,
       initialValue: Failure(CommandNotExecutedException()),
     )..execute();
@@ -68,7 +68,7 @@ class HomeViewModel extends ChangeNotifier {
   UndoableCommand<void, Result<void>, Memo> _makeDeleteMemoCommand({
     required int id,
   }) {
-    return Command.createUndoableNoParam(
+    return Command.createUndoableNoParam<Result<void>, Memo>(
           (UndoStack<Memo> undoStack) async =>
               _deleteMemo(undoStack: undoStack, id: id),
           initialValue: Failure(CommandNotExecutedException()),
