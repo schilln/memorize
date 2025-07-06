@@ -27,6 +27,17 @@ final GoRouter _router = GoRouter(
           viewModel: EditorViewmodel(memoRepository: context.read()),
         );
       },
+      routes: [
+        GoRoute(
+          path: ':id',
+          builder: (context, state) {
+            final id = int.parse(state.pathParameters['id']!);
+            final viewModel = EditorViewmodel(memoRepository: context.read());
+            viewModel.load(id: id);
+            return EditorScreen(viewModel: viewModel);
+          },
+        ),
+      ],
     ),
   ],
 );
