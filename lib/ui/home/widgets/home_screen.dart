@@ -45,7 +45,10 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go(Routes.editor),
+        onPressed: () {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          context.go(Routes.editor);
+        },
         tooltip: 'Add item',
         child: const Icon(Icons.add),
       ),
@@ -91,6 +94,7 @@ class MemoSlider extends StatelessWidget {
         children: [
           SlidableAction(
             onPressed: (context) {
+              ScaffoldMessenger.of(context).clearSnackBars();
               context.go(Routes.editor);
             },
             icon: Icons.edit,
