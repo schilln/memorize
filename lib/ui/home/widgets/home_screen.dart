@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           ScaffoldMessenger.of(context).clearSnackBars();
-          context.go(Routes.editor);
+          context.push(Routes.editor);
         },
         tooltip: 'Add item',
         child: const Icon(Icons.add),
@@ -97,7 +97,7 @@ class MemoSlider extends StatelessWidget {
           SlidableAction(
             onPressed: (context) {
               ScaffoldMessenger.of(context).clearSnackBars();
-              context.go(Routes.editor);
+              context.push(Routes.editor);
             },
             icon: Icons.edit,
             backgroundColor: Colors.green,
