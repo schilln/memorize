@@ -6,8 +6,8 @@ import '../../../data/repositories/memo_repository.dart';
 import '../../../domain/models/memo/memo.dart';
 import '../../../utils/exceptions/command.dart';
 
-class EditorViewmodel extends ChangeNotifier {
-  EditorViewmodel({required final MemoRepository memoRepository})
+class EditorViewModel extends ChangeNotifier {
+  EditorViewModel({required final MemoRepository memoRepository})
     : _memoRepository = memoRepository;
 
   TextEditingController get nameController => _nameController;

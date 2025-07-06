@@ -7,7 +7,7 @@ import '../view_models/editor_viewmodel.dart';
 class EditorScreen extends StatelessWidget {
   const EditorScreen({super.key, required this.viewModel});
 
-  final EditorViewmodel viewModel;
+  final EditorViewModel viewModel;
 
   @override
   Widget build(final BuildContext context) {
@@ -19,47 +19,37 @@ class EditorScreen extends StatelessWidget {
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
-          child: ItemForm(viewModel: viewModel),
+          child: Column(
+            spacing: 8,
+            children: [
+              TextFormField(
+                controller: viewModel.nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+              Expanded(
+                child: TextFormField(
+                  controller: viewModel.contentController,
+                  maxLines: null,
+                  expands: true,
+                  decoration: InputDecoration(
+                    labelText: 'Content',
+                    alignLabelWithHint: true,
+                  ),
+                ),
+              ),
+              ButtonRow(viewModel: viewModel),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class ItemForm extends StatelessWidget {
-  ItemForm({super.key, required final viewModel})
-    : _viewModel = viewModel,
-      _nameController = viewModel.nameController,
-      _contentController = viewModel.contentController;
-
-  final EditorViewmodel _viewModel;
-
-  final TextEditingController _nameController;
-  final TextEditingController _contentController;
-
-  @override
-  Widget build(final BuildContext context) {
-    return Form(
-      child: Column(
-        spacing: 8,
-        children: [
-          TextFormField(
-            controller: _nameController,
-            decoration: InputDecoration(labelText: 'Name'),
-            onSaved: (final value) {},
-          ),
-          ContentTextBox(_contentController),
-          ButtonRow(viewModel: _viewModel),
-        ],
-      ),
-    );
-  }
-}
-
 class ContentTextBox extends StatelessWidget {
-  final TextEditingController _controller;
-
   const ContentTextBox(this._controller, {super.key});
+
+  final TextEditingController _controller;
 
   @override
   Widget build(final BuildContext context) {
@@ -72,7 +62,6 @@ class ContentTextBox extends StatelessWidget {
           labelText: 'Content',
           alignLabelWithHint: true,
         ),
-        onSaved: (final value) {},
       ),
     );
   }
@@ -81,7 +70,7 @@ class ContentTextBox extends StatelessWidget {
 class ButtonRow extends StatelessWidget {
   const ButtonRow({super.key, required this.viewModel});
 
-  final EditorViewmodel viewModel;
+  final EditorViewModel viewModel;
 
   static const _padding = 8;
 
@@ -103,10 +92,6 @@ class ButtonRow extends StatelessWidget {
             result.fold((final success) {
               if (context.mounted) context.go(Routes.home);
             }, (final e) {});
-
-            // FormState form = Form.of(context);
-            // form.validate();
-            // form.save();
           },
           child: Row(
             spacing: _padding.toDouble(),
