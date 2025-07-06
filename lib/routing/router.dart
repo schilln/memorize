@@ -19,16 +19,14 @@ final GoRouter _router = GoRouter(
           viewModel: HomeViewModel(memoRepository: context.read()),
         );
       },
-      routes: [
-        GoRoute(
-          path: Routes.editorRelative,
-          builder: (context, state) {
-            return EditorScreen(
-              viewModel: EditorViewmodel(memoRepository: context.read()),
-            );
-          },
-        ),
-      ],
+    ),
+    GoRoute(
+      path: Routes.editor,
+      builder: (context, state) {
+        return EditorScreen(
+          viewModel: EditorViewmodel(memoRepository: context.read()),
+        );
+      },
     ),
   ],
 );
