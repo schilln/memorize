@@ -66,21 +66,26 @@ class MemosList extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    return ListView.builder(
-      itemCount: viewModel.memos.length,
-      itemBuilder: (final context, final index) =>
-          MemoSlider(viewModel: viewModel, memo: viewModel.memos[index]),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 4, 2, 4),
+      child: ListView.builder(
+        itemCount: viewModel.memos.length,
+        itemBuilder: (final context, final index) =>
+            MemoSlider(viewModel: viewModel, index: index),
+      ),
     );
   }
 }
 
 class MemoSlider extends StatelessWidget {
-  const MemoSlider({super.key, required final viewModel, required final memo})
+  MemoSlider({super.key, required final viewModel, required final index})
     : _viewModel = viewModel,
-      _memo = memo;
+      _memo = viewModel.memos[index],
+      _index = index;
 
   final HomeViewModel _viewModel;
   final Memo _memo;
+  final int _index;
 
   @override
   Widget build(final BuildContext context) {
@@ -111,31 +116,41 @@ class MemoSlider extends StatelessWidget {
           ),
         ],
       ),
-      child: ListTile(
-        title: LayoutBuilder(
-          builder: (final context, final constraints) => Row(
-            spacing: 16,
-            children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: constraints.maxWidth * 0.8,
+      child: Card(
+        color: _index.isOdd
+            ? Theme.of(context).colorScheme.primaryContainer
+            : Theme.of(context).colorScheme.secondaryFixedDim,
+        elevation: 1,
+        margin: EdgeInsets.fromLTRB(2, 2, 2, 2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(2),
+        ),
+        child: ListTile(
+          title: LayoutBuilder(
+            builder: (final context, final constraints) => Row(
+              spacing: 16,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: constraints.maxWidth * 0.8,
+                  ),
+                  child: Text(
+                    _memo.name,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
                 ),
-                child: Text(
-                  _memo.name,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                Expanded(
+                  child: Text(
+                    _memo.content.replaceAll('\n', ' \u2022 '),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Text(
-                  _memo.content.replaceAll('\n', ' \u2022 '),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
