@@ -5,8 +5,8 @@ part 'memo.freezed.dart';
 @freezed
 abstract class Memo with _$Memo {
   factory Memo({
-    required int id,
-    required String name,
-    required String content,
+    required final int id,
+    required final String name,
+    required final String content,
   }) = _Memo;
 }

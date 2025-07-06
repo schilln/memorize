@@ -14,7 +14,7 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: Routes.home,
-      builder: (context, state) {
+      builder: (final context, final state) {
         return HomeScreen(
           viewModel: HomeViewModel(memoRepository: context.read()),
         );
@@ -22,7 +22,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: Routes.editor,
-      builder: (context, state) {
+      builder: (final context, final state) {
         return EditorScreen(
           viewModel: EditorViewmodel(memoRepository: context.read()),
         );
@@ -30,7 +30,7 @@ final GoRouter _router = GoRouter(
       routes: [
         GoRoute(
           path: ':id',
-          builder: (context, state) {
+          builder: (final context, final state) {
             final id = int.parse(state.pathParameters['id']!);
             final viewModel = EditorViewmodel(memoRepository: context.read());
             viewModel.load(id: id);

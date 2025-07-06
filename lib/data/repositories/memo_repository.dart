@@ -20,9 +20,9 @@ class MemoRepository {
     }
   }
 
-  Result<Memo> getMemo(int id) {
+  Result<Memo> getMemo(final int id) {
     try {
-      Memo? result = _memos[id];
+      final Memo? result = _memos[id];
       return result == null ? Failure(Exception()) : Success(result);
     } on Exception catch (e) {
       return Failure(e);
@@ -30,9 +30,9 @@ class MemoRepository {
   }
 
   Result<int> createMemo({
-    int? id,
-    required String name,
-    required String content,
+    final int? id,
+    required final String name,
+    required final String content,
   }) {
     try {
       late final Memo memo;
@@ -48,9 +48,9 @@ class MemoRepository {
     }
   }
 
-  Result<Memo> deleteMemo(int id) {
+  Result<Memo> deleteMemo(final int id) {
     try {
-      var memo = _memos.remove(id);
+      final memo = _memos.remove(id);
       return memo != null ? Success(memo) : Failure(KeyNotFoundException());
     } on Exception catch (e) {
       return Failure(e);
@@ -58,9 +58,9 @@ class MemoRepository {
   }
 
   Result<int> updateMemo({
-    required int id,
-    required String name,
-    required String content,
+    required final int id,
+    required final String name,
+    required final String content,
   }) {
     try {
       if (_memos.containsKey(id)) {

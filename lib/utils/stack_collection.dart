@@ -5,7 +5,7 @@ class StackCollection<T> {
   bool get isNotEmpty => _items.isNotEmpty;
   int get length => _items.length;
 
-  void push(T item) => _items.add(item);
+  void push(final T item) => _items.add(item);
   T pop() => _items.removeLast();
 
   T get peek => _items.last;

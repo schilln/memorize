@@ -7,7 +7,7 @@ import '../../../domain/models/memo/memo.dart';
 import '../../../utils/exceptions/command.dart';
 
 class EditorViewmodel extends ChangeNotifier {
-  EditorViewmodel({required MemoRepository memoRepository})
+  EditorViewmodel({required final MemoRepository memoRepository})
     : _memoRepository = memoRepository;
 
   TextEditingController get nameController => _nameController;
@@ -19,18 +19,18 @@ class EditorViewmodel extends ChangeNotifier {
   final _contentController = TextEditingController();
   int? _idIfUpdate;
 
-  Future<Result<void>> load({required int id}) async {
+  Future<Result<void>> load({required final int id}) async {
     final command = _makeLoadCommand(id: id);
     final result = await command.executeWithFuture();
-    result.fold((success) {
+    result.fold((final success) {
       _idIfUpdate = success.id;
       _nameController.text = success.name;
       _contentController.text = success.content;
-    }, (e) => Failure(e));
+    }, (final e) => Failure(e));
     return command.value;
   }
 
-  CommandAsync<void, Result<Memo>> _makeLoadCommand({required int id}) {
+  CommandAsync<void, Result<Memo>> _makeLoadCommand({required final int id}) {
     return Command.createAsyncNoParam<Result<Memo>>(
           () => _load(id: id),
           initialValue: Failure(CommandNotExecutedException()),
@@ -38,7 +38,7 @@ class EditorViewmodel extends ChangeNotifier {
         as CommandAsync<void, Result<Memo>>;
   }
 
-  Future<Result<Memo>> _load({required int id}) async {
+  Future<Result<Memo>> _load({required final int id}) async {
     try {
       final result = _memoRepository.getMemo(id);
       return result;
@@ -65,8 +65,8 @@ class EditorViewmodel extends ChangeNotifier {
   }
 
   CommandAsync<void, Result<int>> _makeCreateMemoCommand({
-    required String name,
-    required String content,
+    required final String name,
+    required final String content,
   }) {
     return Command.createAsyncNoParam<Result<int>>(
           () async => _createMemo(name: name, content: content),
@@ -75,7 +75,10 @@ class EditorViewmodel extends ChangeNotifier {
         as CommandAsync<void, Result<int>>;
   }
 
-  Result<int> _createMemo({required String name, required String content}) {
+  Result<int> _createMemo({
+    required final String name,
+    required final String content,
+  }) {
     try {
       final id = _memoRepository.createMemo(name: name, content: content);
       return id;
@@ -85,9 +88,9 @@ class EditorViewmodel extends ChangeNotifier {
   }
 
   CommandAsync<void, Result<void>> _makeUpdateMemoCommand({
-    required int id,
-    required String name,
-    required String content,
+    required final int id,
+    required final String name,
+    required final String content,
   }) {
     return Command.createAsyncNoParam<Result<void>>(
           () async => _updateMemo(id: id, name: name, content: content),
@@ -97,9 +100,9 @@ class EditorViewmodel extends ChangeNotifier {
   }
 
   Result<void> _updateMemo({
-    required int id,
-    required String name,
-    required String content,
+    required final int id,
+    required final String name,
+    required final String content,
   }) {
     try {
       final result = _memoRepository.updateMemo(
