@@ -1,10 +1,14 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../data/repositories/memo_repository.dart';
 import '../ui/editor/view_models/editor_viewmodel.dart';
 import '../ui/editor/widgets/editor_screen.dart';
 import '../ui/home/view_models/home_viewmodel.dart';
 import '../ui/home/widgets/home_screen.dart';
+import '../ui/memorize/view_models/memorize_viewmodel.dart';
+import '../ui/memorize/widgets/memorize_screen.dart';
 import 'routes.dart';
 
 GoRouter get router => _router;
@@ -19,6 +23,25 @@ final GoRouter _router = GoRouter(
           viewModel: HomeViewModel(memoRepository: context.read()),
         );
       },
+      routes: [
+        GoRoute(
+          path: '${Routes.memorizerRelative}/:id',
+          builder: (final context, final state) {
+            final id = int.parse(state.pathParameters['id']!);
+            final result = context.read<MemoRepository>().getMemo(id);
+            return result.fold(
+              (final success) {
+                final viewModel = MemorizeViewModel(memo: success);
+                return MemorizeScreen(viewModel: viewModel);
+              },
+              (final e) {
+                // TODO
+                return Text('Something didn\'t work...');
+              },
+            );
+          },
+        ),
+      ],
     ),
     GoRoute(
       path: Routes.editor,
