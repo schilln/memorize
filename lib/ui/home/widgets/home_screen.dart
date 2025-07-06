@@ -18,29 +18,31 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Home'),
       ),
-      body: Center(
-        child: ListenableBuilder(
-          listenable: viewModel.load,
-          builder: (context, child) {
-            if (viewModel.load.isExecutingSync.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (viewModel.load.value.isError()) {
-              return const Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8,
-                  children: [Icon(Icons.error), Text('An error occurred')],
-                ),
-              );
-            }
-
-            return child!;
-          },
+      body: SafeArea(
+        child: Center(
           child: ListenableBuilder(
-            listenable: viewModel,
-            builder: (context, child) => MemosList(viewModel: viewModel),
+            listenable: viewModel.load,
+            builder: (context, child) {
+              if (viewModel.load.isExecutingSync.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (viewModel.load.value.isError()) {
+                return const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 8,
+                    children: [Icon(Icons.error), Text('An error occurred')],
+                  ),
+                );
+              }
+
+              return child!;
+            },
+            child: ListenableBuilder(
+              listenable: viewModel,
+              builder: (context, child) => MemosList(viewModel: viewModel),
+            ),
           ),
         ),
       ),
