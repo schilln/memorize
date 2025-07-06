@@ -26,7 +26,9 @@ class HomeViewModel extends ChangeNotifier {
 
   final MemoRepository _memoRepository;
   List<Memo> _memos = [];
-  UnmodifiableListView<Memo> get memos => UnmodifiableListView(_memos);
+  UnmodifiableListView<Memo> get memos => UnmodifiableListView(
+    _memos.toList()..sort((a, b) => a.id.compareTo(b.id)),
+  );
 
   final StackCollection<CommandFuture<void, Result<void>, Memo>>
   _deleteCommandFutureStack = StackCollection();
@@ -49,10 +51,18 @@ class HomeViewModel extends ChangeNotifier {
     command.undo();
   }
 
-  Result<int> _createMemo({required String name, required String content}) {
+  Result<int> _createMemo({
+    int? id,
+    required String name,
+    required String content,
+  }) {
     try {
-      var id = _memoRepository.createMemo(name: name, content: content);
-      return id;
+      var newId = _memoRepository.createMemo(
+        id: id,
+        name: name,
+        content: content,
+      );
+      return newId;
     } finally {
       notifyListeners();
     }
@@ -74,7 +84,11 @@ class HomeViewModel extends ChangeNotifier {
           initialValue: Failure(CommandNotExecutedException()),
           undo: (UndoStack<Memo> undoStack, reason) async {
             var memo = undoStack.pop();
-            return _createMemo(name: memo.name, content: memo.content);
+            return _createMemo(
+              id: memo.id,
+              name: memo.name,
+              content: memo.content,
+            );
           },
           undoOnExecutionFailure: false,
         )
@@ -86,7 +100,7 @@ class HomeViewModel extends ChangeNotifier {
       var memo = _memoRepository.deleteMemo(id);
       return memo.fold((success) {
         undoStack?.push(success);
-        return Success(success.id);
+        return Success.unit();
       }, (e) => Failure(e));
     } finally {
       notifyListeners();

@@ -29,9 +29,18 @@ class MemoRepository {
     }
   }
 
-  Result<int> createMemo({required String name, required String content}) {
+  Result<int> createMemo({
+    int? id,
+    required String name,
+    required String content,
+  }) {
     try {
-      final memo = Memo(id: _sequentialId++, name: name, content: content);
+      late final Memo memo;
+      if (id != null && !_memos.containsKey(id)) {
+        memo = Memo(id: id, name: name, content: content);
+      } else {
+        memo = Memo(id: _sequentialId++, name: name, content: content);
+      }
       _memos[memo.id] = memo;
       return Success(memo.id);
     } on Exception catch (e) {
