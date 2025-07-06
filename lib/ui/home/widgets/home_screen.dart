@@ -117,7 +117,10 @@ class MemoSlider extends StatelessWidget {
         ],
       ),
       child: GestureDetector(
-        onTap: () => context.push(Routes.memorize(_memo.id)),
+        onTap: () {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          context.push(Routes.memorize(_memo.id));
+        },
         child: Card(
           color: _index.isOdd
               ? Theme.of(context).colorScheme.primaryContainer
