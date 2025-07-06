@@ -8,3 +8,12 @@ class KeyNotFoundException implements Exception {
     return 'KeyNotFoundException${message != null ? ': $message' : ''}';
   }
 }
+
+class SimpleMessageException implements Exception {
+  SimpleMessageException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
+}

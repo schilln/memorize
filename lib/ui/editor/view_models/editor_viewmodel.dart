@@ -4,6 +4,7 @@ import 'package:result_dart/result_dart.dart';
 
 import '../../../data/repositories/memo_repository.dart';
 import '../../../domain/models/memo/memo.dart';
+import '../../../utils/exceptions/base.dart';
 import '../../../utils/exceptions/command.dart';
 
 class EditorViewModel extends ChangeNotifier {
@@ -50,6 +51,13 @@ class EditorViewModel extends ChangeNotifier {
   Future<Result<void>> save() async {
     final name = nameController.text;
     final content = contentController.text;
+
+    if (name.trim().isEmpty || content.trim().isEmpty) {
+      return Failure(
+        SimpleMessageException('Name and content must not be empty.'),
+      );
+    }
+
     late final CommandAsync<void, Result<void>> command;
     if (_idIfUpdate == null) {
       command = _makeCreateMemoCommand(name: name, content: content);
