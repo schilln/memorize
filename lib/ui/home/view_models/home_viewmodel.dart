@@ -49,41 +49,10 @@ class HomeViewModel extends ChangeNotifier {
     command.undo();
   }
 
-  Result<int> createMemo({required String name, required String content}) {
-    var command = _makeCreateMemoCommand(name: name, content: content);
-    command.execute();
-    return command.value;
-  }
-
-  UndoableCommand<void, Result<int>, int> _makeCreateMemoCommand({
-    required String name,
-    required String content,
-  }) {
-    return Command.createUndoableNoParam<Result<int>, int>(
-          (UndoStack<int> undoStack) async =>
-              _createMemo(undoStack: undoStack, name: name, content: content),
-          initialValue: Failure(CommandNotExecutedException()),
-          undo: (UndoStack<int> undoStack, reason) async {
-            var id = undoStack.pop();
-            _deleteMemo(id: id);
-            return Success(id);
-          },
-          undoOnExecutionFailure: false,
-        )
-        as UndoableCommand<void, Result<int>, int>;
-  }
-
-  Result<int> _createMemo({
-    UndoStack<int>? undoStack,
-    required String name,
-    required String content,
-  }) {
+  Result<int> _createMemo({required String name, required String content}) {
     try {
       var id = _memoRepository.createMemo(name: name, content: content);
-      return id.fold((success) {
-        undoStack?.push(success);
-        return id;
-      }, (e) => Failure(e));
+      return id;
     } finally {
       notifyListeners();
     }
@@ -99,7 +68,7 @@ class HomeViewModel extends ChangeNotifier {
   UndoableCommand<void, Result<void>, Memo> _makeDeleteMemoCommand({
     required int id,
   }) {
-    return Command.createUndoableNoParam<Result<void>, Memo>(
+    return Command.createUndoableNoParam(
           (UndoStack<Memo> undoStack) async =>
               _deleteMemo(undoStack: undoStack, id: id),
           initialValue: Failure(CommandNotExecutedException()),

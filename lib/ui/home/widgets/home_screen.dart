@@ -45,9 +45,7 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            viewModel.createMemo(name: 'a name', content: 'some content'),
-        // onPressed: () => context.go(Routes.editor),
+        onPressed: () => context.go(Routes.editor),
         tooltip: 'Add item',
         child: const Icon(Icons.add),
       ),
@@ -65,41 +63,55 @@ class MemosList extends StatelessWidget {
     return ListView.builder(
       itemCount: viewModel.memos.length,
       itemBuilder: (context, index) =>
-          memoSlider(viewModel, viewModel.memos[index]),
+          MemoSlider(viewModel: viewModel, memo: viewModel.memos[index]),
     );
   }
 }
 
-Slidable memoSlider(HomeViewModel viewModel, Memo memo) {
-  return Slidable(
-    key: ValueKey(memo),
-    endActionPane: ActionPane(
-      motion: ScrollMotion(),
-      dismissible: Builder(
-        builder: (context) => DismissiblePane(
-          onDismissed: () => _deleteMemoWithSnackBar(viewModel, memo, context),
+class MemoSlider extends StatelessWidget {
+  const MemoSlider({super.key, required viewModel, required memo})
+    : _viewModel = viewModel,
+      _memo = memo;
+
+  final HomeViewModel _viewModel;
+  final Memo _memo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Slidable(
+      key: ValueKey(_memo),
+      endActionPane: ActionPane(
+        motion: ScrollMotion(),
+        dismissible: Builder(
+          builder: (context) => DismissiblePane(
+            onDismissed: () =>
+                _deleteMemoWithSnackBar(_viewModel, _memo, context),
+          ),
+        ),
+        children: [
+          SlidableAction(
+            onPressed: (context) {
+              context.go(Routes.editor);
+            },
+            icon: Icons.edit,
+            backgroundColor: Colors.green,
+          ),
+          SlidableAction(
+            onPressed: (context) =>
+                _deleteMemoWithSnackBar(_viewModel, _memo, context),
+            icon: Icons.delete,
+            backgroundColor: Colors.red,
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Row(
+          spacing: 8,
+          children: [Text(_memo.name), Text(_memo.content)],
         ),
       ),
-      children: [
-        SlidableAction(
-          onPressed: (context) {
-            context.go(Routes.editor);
-          },
-          icon: Icons.edit,
-          backgroundColor: Colors.green,
-        ),
-        SlidableAction(
-          onPressed: (context) =>
-              _deleteMemoWithSnackBar(viewModel, memo, context),
-          icon: Icons.delete,
-          backgroundColor: Colors.red,
-        ),
-      ],
-    ),
-    child: ListTile(
-      title: Row(spacing: 8, children: [Text(memo.name), Text(memo.content)]),
-    ),
-  );
+    );
+  }
 }
 
 void _deleteMemoWithSnackBar(
