@@ -34,15 +34,11 @@ class HomeViewModel extends ChangeNotifier {
   _deleteCommandFutureStack = StackCollection();
 
   Result<void> _load() {
-    try {
-      final result = _memoRepository.getMemos();
-      return result.fold((final success) {
-        _memos = success;
-        return Success.unit();
-      }, (final e) => Failure(e));
-    } finally {
-      notifyListeners();
-    }
+    final result = _memoRepository.getMemos();
+    return result.fold((final success) {
+      _memos = success;
+      return Success.unit();
+    }, (final e) => Failure(e));
   }
 
   void undoDelete() async {
@@ -64,7 +60,7 @@ class HomeViewModel extends ChangeNotifier {
       );
       return newId;
     } finally {
-      notifyListeners();
+      load.execute();
     }
   }
 
@@ -106,7 +102,7 @@ class HomeViewModel extends ChangeNotifier {
         return Success.unit();
       }, (final e) => Failure(e));
     } finally {
-      notifyListeners();
+      load.execute();
     }
   }
 }

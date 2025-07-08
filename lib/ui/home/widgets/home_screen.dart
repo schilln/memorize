@@ -37,13 +37,8 @@ class HomeScreen extends StatelessWidget {
                 );
               }
 
-              return child!;
+              return MemosList(viewModel: viewModel);
             },
-            child: ListenableBuilder(
-              listenable: viewModel,
-              builder: (final context, final child) =>
-                  MemosList(viewModel: viewModel),
-            ),
           ),
         ),
       ),
