@@ -22,12 +22,12 @@ class EditorScreen extends StatelessWidget {
           child: Column(
             spacing: 8,
             children: [
-              TextFormField(
+              TextField(
                 controller: viewModel.nameController,
                 decoration: InputDecoration(labelText: 'Name'),
               ),
               Expanded(
-                child: TextFormField(
+                child: TextField(
                   controller: viewModel.contentController,
                   maxLines: null,
                   expands: true,
