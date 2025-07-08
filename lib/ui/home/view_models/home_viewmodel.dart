@@ -16,13 +16,13 @@ typedef CommandFuture<TParam, TResult, TUndoState> = ({
 
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel({required final MemoRepository memoRepository})
-    : _memoRepository = memoRepository {
-    load = Command.createSyncNoParam<Result<void>>(
-      _load,
-      initialValue: Failure(CommandNotExecutedException()),
-    )..execute();
-  }
-  late final Command<void, Result<void>> load;
+    : _memoRepository = memoRepository;
+
+  late final Command<void, Result<void>> load =
+      Command.createSyncNoParam<Result<void>>(
+        _load,
+        initialValue: Failure(CommandNotExecutedException()),
+      )..execute();
 
   final MemoRepository _memoRepository;
   List<Memo> _memos = [];
