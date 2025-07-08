@@ -96,7 +96,7 @@ class MemorizeViewModel extends ChangeNotifier {
       .toList();
 
   late final List<int> _shuffledIdx = () {
-    final rng = Random(42);
+    final rng = Random();
     final indices = List.generate(
       _contentList.length,
       (final int index) => index,
