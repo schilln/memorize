@@ -26,6 +26,15 @@ class MemorizeViewModel extends ChangeNotifier {
         return result;
       }, initialValue: Failure(CommandNotExecutedException()))..execute();
 
+  late final Command<void, Result<void>> saveMemorizeState =
+      Command.createSyncNoParam<Result<void>>(() {
+        return _memoRepository.updateMemoMemorizeState(
+          id: _memo.id,
+          keepFirstLetters: keepFirstLetters,
+          fractionWordsKeep: fractionWordsKeep,
+        );
+      }, initialValue: Failure(CommandNotExecutedException()));
+
   String get name => _memo.name;
 
   String get content {
@@ -70,8 +79,12 @@ class MemorizeViewModel extends ChangeNotifier {
     }
   }
 
-  final ValueNotifier<bool> _keepFirstLettersNotifier = ValueNotifier(false);
-  final ValueNotifier<double> _fractionWordsKeepNotifier = ValueNotifier(0);
+  late final ValueNotifier<bool> _keepFirstLettersNotifier = ValueNotifier(
+    _memo.keepFirstLetters ?? false,
+  );
+  late final ValueNotifier<double> _fractionWordsKeepNotifier = ValueNotifier(
+    _memo.fractionWordsKeep ?? 0,
+  );
 
   final int _id;
   final MemoRepository _memoRepository;
