@@ -12,41 +12,69 @@ class MemorizeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Memorize')),
       body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
-          child: Column(
-            spacing: 8,
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  viewModel.name,
-                  style: Theme.of(context).textTheme.titleMedium,
+        child: ListenableBuilder(
+          listenable: viewModel.load,
+          builder: (final context, _) {
+            if (viewModel.load.isExecutingSync.value) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (viewModel.load.value.isError()) {
+              return const Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 8,
+                  children: [Icon(Icons.error), Text('An error occurred')],
                 ),
-              ),
-              ListenableBuilder(
-                listenable: Listenable.merge([
-                  viewModel.fractionWordsKeepListenable,
-                  viewModel.keepFirstLettersListenable,
-                ]),
-                builder: (_, _) {
-                  return Expanded(
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: SingleChildScrollView(
-                        child: Text(
-                          viewModel.content,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              SliderRow(viewModel: viewModel),
-            ],
-          ),
+              );
+            }
+
+            return MemorizeView(viewModel: viewModel);
+          },
         ),
+      ),
+    );
+  }
+}
+
+class MemorizeView extends StatelessWidget {
+  const MemorizeView({super.key, required this.viewModel});
+
+  final MemorizeViewModel viewModel;
+
+  @override
+  Widget build(final BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+      child: Column(
+        spacing: 8,
+        children: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              viewModel.name,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          ListenableBuilder(
+            listenable: Listenable.merge([
+              viewModel.fractionWordsKeepListenable,
+              viewModel.keepFirstLettersListenable,
+            ]),
+            builder: (_, _) {
+              return Expanded(
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: SingleChildScrollView(
+                    child: Text(
+                      viewModel.content,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          SliderRow(viewModel: viewModel),
+        ],
       ),
     );
   }

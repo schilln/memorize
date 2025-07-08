@@ -1,8 +1,6 @@
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../data/repositories/memo_repository.dart';
 import '../ui/editor/view_models/editor_viewmodel.dart';
 import '../ui/editor/widgets/editor_screen.dart';
 import '../ui/home/view_models/home_viewmodel.dart';
@@ -28,17 +26,11 @@ final GoRouter _router = GoRouter(
           path: '${Routes.memorizerRelative}/:id',
           builder: (final context, final state) {
             final id = int.parse(state.pathParameters['id']!);
-            final result = context.read<MemoRepository>().getMemo(id);
-            return result.fold(
-              (final success) {
-                final viewModel = MemorizeViewModel(memo: success);
-                return MemorizeScreen(viewModel: viewModel);
-              },
-              (final e) {
-                // TODO
-                return Text('Something didn\'t work...');
-              },
+            final viewModel = MemorizeViewModel(
+              id: id,
+              memoRepository: context.read(),
             );
+            return MemorizeScreen(viewModel: viewModel);
           },
         ),
       ],
