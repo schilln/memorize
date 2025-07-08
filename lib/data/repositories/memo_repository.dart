@@ -57,16 +57,37 @@ class MemoRepository {
     }
   }
 
-  Result<int> updateMemo({
+  Result<void> updateMemo({
     required final int id,
     required final String name,
     required final String content,
   }) {
     try {
-      if (_memos.containsKey(id)) {
-        final memo = Memo(id: id, name: name, content: content);
-        _memos[memo.id] = memo;
+      final Memo? memo = _memos[id];
+      if (memo != null) {
+        _memos[memo.id] = memo.copyWith(id: id, name: name, content: content);
         return Success(memo.id);
+      } else {
+        return Failure(KeyNotFoundException());
+      }
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
+  Result<void> updateMemoMemorizeState({
+    required final int id,
+    final bool? keepFirstLetters,
+    final double? fractionWordsKeep,
+  }) {
+    try {
+      final Memo? memo = _memos[id];
+      if (memo != null) {
+        _memos[id] = memo.copyWith(
+          keepFirstLetters: keepFirstLetters,
+          fractionWordsKeep: fractionWordsKeep,
+        );
+        return Success.unit();
       } else {
         return Failure(KeyNotFoundException());
       }

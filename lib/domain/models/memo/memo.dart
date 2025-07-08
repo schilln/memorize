@@ -8,5 +8,7 @@ abstract class Memo with _$Memo {
     required final int id,
     required final String name,
     required final String content,
+    final bool? keepFirstLetters,
+    final double? fractionWordsKeep,
   }) = _Memo;
 }
