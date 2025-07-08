@@ -18,16 +18,18 @@ class MemorizeViewModel extends ChangeNotifier {
     if (keepFirstLetters) {
       for (final int idx in indicesToChange) {
         final String s = result[idx];
-        result[idx] = (!s.contains('\n')) ? s[0] + '_' * (s.length - 1) : s;
+        result[idx] = (RegExp(r'^\w+$').hasMatch(s))
+            ? s[0] + '_' * (s.length - 1)
+            : s;
       }
     } else {
       for (final int idx in indicesToChange) {
         final String s = result[idx];
-        result[idx] = (!s.contains('\n')) ? '_' * s.length : s;
+        result[idx] = (RegExp(r'^\w+$').hasMatch(s)) ? '_' * s.length : s;
       }
     }
 
-    return result.join(' ');
+    return result.join('');
   }
 
   ValueListenable<double> get fractionWordsKeepListenable =>
@@ -54,7 +56,7 @@ class MemorizeViewModel extends ChangeNotifier {
 
   final Memo _memo;
 
-  late final List<String> _contentList = RegExp(r'\S+|\n')
+  late final List<String> _contentList = RegExp(r'\w+|[^\w\s]|\s+')
       .allMatches(_memo.content)
       .map((final RegExpMatch match) => match.group(0) ?? '')
       .toList();
