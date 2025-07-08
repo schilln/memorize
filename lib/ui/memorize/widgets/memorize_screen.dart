@@ -9,26 +9,31 @@ class MemorizeScreen extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Memorize')),
-      body: SafeArea(
-        child: ListenableBuilder(
-          listenable: viewModel.load,
-          builder: (final context, _) {
-            if (viewModel.load.isExecutingSync.value) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (viewModel.load.value.isError()) {
-              return const Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8,
-                  children: [Icon(Icons.error), Text('An error occurred')],
-                ),
-              );
-            }
+    return PopScope(
+      onPopInvokedWithResult: (_, _) {
+        viewModel.saveMemorizeState.execute();
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Memorize')),
+        body: SafeArea(
+          child: ListenableBuilder(
+            listenable: viewModel.load,
+            builder: (final context, _) {
+              if (viewModel.load.isExecutingSync.value) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (viewModel.load.value.isError()) {
+                return const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 8,
+                    children: [Icon(Icons.error), Text('An error occurred')],
+                  ),
+                );
+              }
 
-            return MemorizeView(viewModel: viewModel);
-          },
+              return MemorizeView(viewModel: viewModel);
+            },
+          ),
         ),
       ),
     );
