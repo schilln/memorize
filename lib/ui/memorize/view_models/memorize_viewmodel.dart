@@ -1,11 +1,30 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_command/flutter_command.dart';
+import 'package:result_dart/result_dart.dart';
 
+import '../../../data/repositories/memo_repository.dart';
 import '../../../domain/models/memo/memo.dart';
+import '../../../utils/exceptions/command.dart';
 
 class MemorizeViewModel extends ChangeNotifier {
-  MemorizeViewModel({required final Memo memo}) : _memo = memo;
+  MemorizeViewModel({
+    required final int id,
+    required final MemoRepository memoRepository,
+  }) : _id = id,
+       _memoRepository = memoRepository;
+
+  late final Command<void, Result<Memo>> load =
+      Command.createSyncNoParam<Result<Memo>>(() {
+        final Result<Memo> result = _memoRepository.getMemo(_id).fold((
+          final success,
+        ) {
+          _memo = success;
+          return Success(_memo);
+        }, (final e) => Failure(e));
+        return result;
+      }, initialValue: Failure(CommandNotExecutedException()))..execute();
 
   String get name => _memo.name;
 
@@ -54,7 +73,9 @@ class MemorizeViewModel extends ChangeNotifier {
   final ValueNotifier<bool> _keepFirstLettersNotifier = ValueNotifier(false);
   final ValueNotifier<double> _fractionWordsKeepNotifier = ValueNotifier(0);
 
-  final Memo _memo;
+  final int _id;
+  final MemoRepository _memoRepository;
+  late final Memo _memo;
 
   late final List<String> _contentList = RegExp(r'\w+|[^\w\s]|\s+')
       .allMatches(_memo.content)
