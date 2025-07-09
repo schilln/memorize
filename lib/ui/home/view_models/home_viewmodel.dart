@@ -7,12 +7,6 @@ import 'package:result_dart/result_dart.dart';
 import '../../../data/repositories/memo_repository.dart';
 import '../../../domain/models/memo/memo.dart';
 import '../../../utils/exceptions/command.dart';
-import '../../../utils/stack_collection.dart';
-
-typedef CommandFuture<TParam, TResult, TUndoState> = ({
-  UndoableCommand<TParam, TResult, TUndoState> command,
-  Future<TResult> future,
-});
 
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel({required final MemoRepository memoRepository})
@@ -30,21 +24,12 @@ class HomeViewModel extends ChangeNotifier {
     _memos.toList()..sort((final a, final b) => a.id.compareTo(b.id)),
   );
 
-  final StackCollection<CommandFuture<void, Result<void>, Memo>>
-  _deleteCommandFutureStack = StackCollection();
-
   Result<void> _load() {
     final result = _memoRepository.getMemos();
     return result.fold((final success) {
       _memos = success;
       return Success.unit();
     }, (final e) => Failure(e));
-  }
-
-  void undoDelete() async {
-    final (:command, :future) = _deleteCommandFutureStack.pop();
-    await future;
-    command.undo();
   }
 
   Result<int> _createMemo({
@@ -64,41 +49,31 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Result<void> deleteMemo({required final int id}) {
-    final command = _makeDeleteMemoCommand(id: id);
-    final future = command.executeWithFuture();
-    _deleteCommandFutureStack.push((command: command, future: future));
-    return command.value;
-  }
-
-  UndoableCommand<void, Result<void>, Memo> _makeDeleteMemoCommand({
-    required final int id,
-  }) {
-    return Command.createUndoableNoParam<Result<void>, Memo>(
-          (final UndoStack<Memo> undoStack) async =>
-              _deleteMemo(undoStack: undoStack, id: id),
-          initialValue: Failure(CommandNotExecutedException()),
-          undo: (final UndoStack<Memo> undoStack, final reason) async {
-            final memo = undoStack.pop();
-            return _createMemo(
-              id: memo.id,
-              name: memo.name,
-              content: memo.content,
-            );
-          },
-          undoOnExecutionFailure: false,
-        )
-        as UndoableCommand<void, Result<void>, Memo>;
-  }
+  late final UndoableCommand<int, Result<void>, Memo> deleteMemoCommand =
+      Command.createUndoable<int, Result<void>, Memo>(
+            (final int id, final UndoStack<Memo> undoStack) async =>
+                _deleteMemo(id: id, undoStack: undoStack),
+            initialValue: Failure(CommandNotExecutedException()),
+            undo: (final UndoStack<Memo> undoStack, final reason) async {
+              final memo = undoStack.pop();
+              return _createMemo(
+                id: memo.id,
+                name: memo.name,
+                content: memo.content,
+              );
+            },
+            undoOnExecutionFailure: false,
+          )
+          as UndoableCommand<int, Result<void>, Memo>;
 
   Result<void> _deleteMemo({
-    final UndoStack<Memo>? undoStack,
     required final int id,
+    required final UndoStack<Memo> undoStack,
   }) {
     try {
       final memo = _memoRepository.deleteMemo(id);
       return memo.fold((final success) {
-        undoStack?.push(success);
+        undoStack.push(success);
         return Success.unit();
       }, (final e) => Failure(e));
     } finally {

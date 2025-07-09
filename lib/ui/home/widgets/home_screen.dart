@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
@@ -164,13 +166,26 @@ void _deleteMemoWithSnackBar(
   final Memo memo,
   final BuildContext context,
 ) {
-  viewModel.deleteMemo(id: memo.id);
+  viewModel.deleteMemoCommand.execute(memo.id);
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: const Text('Memo deleted'),
       action: SnackBarAction(
         label: 'Undo',
-        onPressed: () => viewModel.undoDelete(),
+        onPressed: () {
+          try {
+            if (!viewModel.deleteMemoCommand.isExecuting.value) {
+              viewModel.deleteMemoCommand.undo();
+            }
+          } on AssertionError catch (e) {
+            if (e.toString().contains('_undoStack.isNotEmpty')) {
+              // TODO: Set up a logger.
+              log('`undo` tried to pop an empty stack', error: e);
+            } else {
+              rethrow;
+            }
+          }
+        },
       ),
     ),
   );
