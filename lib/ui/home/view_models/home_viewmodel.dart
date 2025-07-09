@@ -22,7 +22,7 @@ class HomeViewModel extends ChangeNotifier {
         initialValue: Failure(CommandNotExecutedException()),
       )..execute();
 
-  late final UndoableCommand<int, Result<void>, Memo> deleteMemoCommand =
+  late final UndoableCommand<int, Result<void>, Memo> deleteMemo =
       Command.createUndoable<int, Result<void>, Memo>(
             (final int id, final UndoStack<Memo> undoStack) async =>
                 _deleteMemo(id: id, undoStack: undoStack),

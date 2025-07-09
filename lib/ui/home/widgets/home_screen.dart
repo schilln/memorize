@@ -166,7 +166,7 @@ void _deleteMemoWithSnackBar(
   final Memo memo,
   final BuildContext context,
 ) {
-  viewModel.deleteMemoCommand.execute(memo.id);
+  viewModel.deleteMemo.execute(memo.id);
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: const Text('Memo deleted'),
@@ -174,8 +174,8 @@ void _deleteMemoWithSnackBar(
         label: 'Undo',
         onPressed: () {
           try {
-            if (!viewModel.deleteMemoCommand.isExecuting.value) {
-              viewModel.deleteMemoCommand.undo();
+            if (!viewModel.deleteMemo.isExecuting.value) {
+              viewModel.deleteMemo.undo();
             }
           } on AssertionError catch (e) {
             if (e.toString().contains('_undoStack.isNotEmpty')) {
