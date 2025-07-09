@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../ui/editor/view_models/editor_viewmodel.dart';
 import '../ui/editor/widgets/editor_screen.dart';
@@ -9,9 +10,7 @@ import '../ui/memorize/view_models/memorize_viewmodel.dart';
 import '../ui/memorize/widgets/memorize_screen.dart';
 import 'routes.dart';
 
-GoRouter get router => _router;
-
-final GoRouter _router = GoRouter(
+GoRouter router(final Database db) => GoRouter(
   initialLocation: Routes.home,
   routes: [
     GoRoute(

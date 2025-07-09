@@ -4,9 +4,13 @@ import 'package:result_dart/result_dart.dart';
 
 import '../../../utils/exceptions/base.dart';
 import '../../domain/models/memo/memo.dart';
+import '../services/memo_service.dart';
 
 class MemoRepository {
-  MemoRepository();
+  MemoRepository({required final MemoService memoService});
+  // : _memoService = memoService;
+
+  // final MemoService _memoService;
 
   final Map<int, Memo> _memos = {};
   int _sequentialId = 0;
