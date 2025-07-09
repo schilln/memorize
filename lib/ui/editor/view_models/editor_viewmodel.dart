@@ -3,13 +3,13 @@ import 'package:flutter_command/flutter_command.dart';
 import 'package:result_dart/result_dart.dart';
 
 import '../../../data/repositories/memo_repository.dart';
-import '../../../domain/models/memo/memo.dart';
 import '../../../utils/exceptions/base.dart';
 import '../../../utils/exceptions/command.dart';
 
 class EditorViewModel extends ChangeNotifier {
-  EditorViewModel({required final MemoRepository memoRepository})
-    : _memoRepository = memoRepository;
+  EditorViewModel({final int? id, required final MemoRepository memoRepository})
+    : _id = id,
+      _memoRepository = memoRepository;
 
   TextEditingController get nameController => _nameController;
   TextEditingController get contentController => _contentController;
@@ -18,35 +18,22 @@ class EditorViewModel extends ChangeNotifier {
 
   final _nameController = TextEditingController();
   final _contentController = TextEditingController();
-  int? _idIfUpdate;
+  int? _id;
 
-  Future<Result<void>> load({required final int id}) async {
-    final command = _makeLoadCommand(id: id);
-    final result = await command.executeWithFuture();
-    result.fold((final success) {
-      _idIfUpdate = success.id;
-      _nameController.text = success.name;
-      _contentController.text = success.content;
-    }, (final e) => Failure(e));
-    return command.value;
-  }
-
-  CommandAsync<void, Result<Memo>> _makeLoadCommand({required final int id}) {
-    return Command.createAsyncNoParam<Result<Memo>>(
-          () => _load(id: id),
-          initialValue: Failure(CommandNotExecutedException()),
-        )
-        as CommandAsync<void, Result<Memo>>;
-  }
-
-  Future<Result<Memo>> _load({required final int id}) async {
-    try {
-      final result = _memoRepository.getMemo(id);
-      return result;
-    } finally {
-      notifyListeners();
-    }
-  }
+  late final Command<int, Result<void>> load =
+      Command.createSync<int, Result<void>>((final int id) {
+        try {
+          final result = _memoRepository.getMemo(id);
+          return result.fold((final success) {
+            _id = success.id;
+            _nameController.text = success.name;
+            _contentController.text = success.content;
+            return Success.unit();
+          }, (final e) => Failure(e));
+        } on Exception catch (e) {
+          return Failure(e);
+        }
+      }, initialValue: Failure(CommandNotExecutedException()));
 
   Future<Result<void>> save() async {
     final name = nameController.text;
@@ -59,14 +46,10 @@ class EditorViewModel extends ChangeNotifier {
     }
 
     late final CommandAsync<void, Result<void>> command;
-    if (_idIfUpdate == null) {
+    if (_id == null) {
       command = _makeCreateMemoCommand(name: name, content: content);
     } else {
-      command = _makeUpdateMemoCommand(
-        id: _idIfUpdate!,
-        name: name,
-        content: content,
-      );
+      command = _makeUpdateMemoCommand(id: _id!, name: name, content: content);
     }
     await command.executeWithFuture();
     return command.value;
