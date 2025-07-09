@@ -12,42 +12,15 @@ class HomeViewModel extends ChangeNotifier {
   HomeViewModel({required final MemoRepository memoRepository})
     : _memoRepository = memoRepository;
 
+  UnmodifiableListView<Memo> get memos => UnmodifiableListView(
+    _memos.toList()..sort((final a, final b) => a.id.compareTo(b.id)),
+  );
+
   late final Command<void, Result<void>> load =
       Command.createSyncNoParam<Result<void>>(
         _load,
         initialValue: Failure(CommandNotExecutedException()),
       )..execute();
-
-  final MemoRepository _memoRepository;
-  List<Memo> _memos = [];
-  UnmodifiableListView<Memo> get memos => UnmodifiableListView(
-    _memos.toList()..sort((final a, final b) => a.id.compareTo(b.id)),
-  );
-
-  Result<void> _load() {
-    final result = _memoRepository.getMemos();
-    return result.fold((final success) {
-      _memos = success;
-      return Success.unit();
-    }, (final e) => Failure(e));
-  }
-
-  Result<int> _createMemo({
-    final int? id,
-    required final String name,
-    required final String content,
-  }) {
-    try {
-      final newId = _memoRepository.createMemo(
-        id: id,
-        name: name,
-        content: content,
-      );
-      return newId;
-    } finally {
-      load.execute();
-    }
-  }
 
   late final UndoableCommand<int, Result<void>, Memo> deleteMemoCommand =
       Command.createUndoable<int, Result<void>, Memo>(
@@ -66,6 +39,17 @@ class HomeViewModel extends ChangeNotifier {
           )
           as UndoableCommand<int, Result<void>, Memo>;
 
+  final MemoRepository _memoRepository;
+  List<Memo> _memos = [];
+
+  Result<void> _load() {
+    final result = _memoRepository.getMemos();
+    return result.fold((final success) {
+      _memos = success;
+      return Success.unit();
+    }, (final e) => Failure(e));
+  }
+
   Result<void> _deleteMemo({
     required final int id,
     required final UndoStack<Memo> undoStack,
@@ -76,6 +60,23 @@ class HomeViewModel extends ChangeNotifier {
         undoStack.push(success);
         return Success.unit();
       }, (final e) => Failure(e));
+    } finally {
+      load.execute();
+    }
+  }
+
+  Result<int> _createMemo({
+    final int? id,
+    required final String name,
+    required final String content,
+  }) {
+    try {
+      final newId = _memoRepository.createMemo(
+        id: id,
+        name: name,
+        content: content,
+      );
+      return newId;
     } finally {
       load.execute();
     }
