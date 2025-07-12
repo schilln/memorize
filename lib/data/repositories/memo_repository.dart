@@ -76,10 +76,13 @@ class MemoRepository {
     }
   }
 
-  Result<Memo> deleteMemo(final int id) {
+  Future<Result<Memo>> deleteMemo({required final int id}) async {
     try {
-      final memo = _cachedMemos.remove(id);
-      return memo != null ? Success(memo) : Failure(KeyNotFoundException());
+      final result = await _memoService.deleteMemo(id: id);
+      return result.flatMap((final success) {
+        final memo = _cachedMemos.remove(id);
+        return memo != null ? Success(memo) : Failure(KeyNotFoundException());
+      });
     } on Exception catch (e) {
       return Failure(e);
     }

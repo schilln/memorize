@@ -96,4 +96,25 @@ class MemoService {
       return Failure(e);
     }
   }
+
+  Future<Result<int>> deleteMemo({required final int id}) async {
+    try {
+      if (!isOpen()) {
+        final Exception? e = (await _open()).exceptionOrNull();
+        if (e != null) {
+          return Failure(e);
+        }
+      }
+      final int result = await _db!.transaction((final txn) async {
+        return await txn.delete(
+          _tableMemo,
+          where: '$_colId = ?',
+          whereArgs: [id],
+        );
+      });
+      return Success(result);
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
 }

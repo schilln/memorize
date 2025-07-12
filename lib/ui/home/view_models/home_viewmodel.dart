@@ -46,13 +46,13 @@ class HomeViewModel extends ChangeNotifier {
     }, (final e) => Failure(e));
   }
 
-  Result<void> _deleteMemo({
+  Future<Result<void>> _deleteMemo({
     required final int id,
     required final UndoStack<Memo> undoStack,
-  }) {
+  }) async {
     try {
-      final memo = _memoRepository.deleteMemo(id);
-      return memo.fold((final success) {
+      final memo = _memoRepository.deleteMemo(id: id);
+      return await memo.fold((final success) {
         undoStack.push(success);
         return Success.unit();
       }, (final e) => Failure(e));
