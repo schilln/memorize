@@ -64,8 +64,8 @@ class MemoRepository {
       final Result<int> newId = await _memoService.createMemo(memo: memo);
       newId.fold((final success) {
         switch (memo) {
-          case NewMemo(:final fromNewMemo):
-            _cachedMemos[success] = fromNewMemo(id: success);
+          case NewMemo():
+            _cachedMemos[success] = memo.fromNewMemo(id: success);
           case Memo():
             _cachedMemos[success] = memo.copyWith(id: success);
         }
