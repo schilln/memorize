@@ -88,23 +88,22 @@ class MemoRepository {
     }
   }
 
-  Result<void> updateMemo({
+  Future<Result<void>> updateMemo({
     required final int id,
     required final String name,
     required final String content,
-  }) {
+  }) async {
     try {
-      final Memo? memo = _cachedMemos[id];
-      if (memo != null) {
-        _cachedMemos[memo.id] = memo.copyWith(
-          id: id,
-          name: name,
-          content: content,
-        );
-        return Success(memo.id);
-      } else {
-        return Failure(KeyNotFoundException());
-      }
+      final result = await _memoService.updateMemo(
+        memo: Memo(id: id, name: name, content: content),
+      );
+      return result.map((final success) async {
+        final updated = await _memoService.getMemo(id: id);
+        return updated.map((final success) {
+          _cachedMemos[id] = success;
+          return Success.unit();
+        });
+      });
     } on Exception catch (e) {
       return Failure(e);
     }
