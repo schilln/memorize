@@ -17,7 +17,7 @@ class HomeViewModel extends ChangeNotifier {
   );
 
   late final Command<void, Result<void>> load =
-      Command.createSyncNoParam<Result<void>>(
+      Command.createAsyncNoParam<Result<void>>(
         _load,
         initialValue: Failure(CommandNotExecutedException()),
       )..execute();
@@ -38,8 +38,8 @@ class HomeViewModel extends ChangeNotifier {
   final MemoRepository _memoRepository;
   List<Memo> _memos = [];
 
-  Result<void> _load() {
-    final result = _memoRepository.getMemos();
+  Future<Result<void>> _load() async {
+    final result = await _memoRepository.getMemos();
     return result.fold((final success) {
       _memos = success;
       return Success.unit();

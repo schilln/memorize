@@ -16,8 +16,8 @@ class MemorizeViewModel extends ChangeNotifier {
        _memoRepository = memoRepository;
 
   late final Command<void, Result<Memo>> load =
-      Command.createSyncNoParam<Result<Memo>>(() {
-        final Result<Memo> result = _memoRepository.getMemo(_id).fold((
+      Command.createAsyncNoParam<Result<Memo>>(() async {
+        final Result<Memo> result = await _memoRepository.getMemo(_id).fold((
           final success,
         ) {
           _memo = success;

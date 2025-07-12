@@ -12,36 +12,47 @@ class MemoRepository {
 
   final MemoService _memoService;
 
-  final Map<int, Memo> _memos = {};
+  final Map<int, Memo> _cachedMemos = {};
+  bool _isLoaded = false;
 
-  // Future<Result<List<Memo>>> getMemos() async {
-  //   try {
-  //     final result = await _memoService.getMemos();
-  //     return result.fold((final success) {
-  //       final List<Map<String, Object?>> a = success;
-  //       return Success(
-  //         a.map((item))
-  //       )
-  //     }, (final e) => Failure(e));
-
-  //     // return Success(await result);
-  //   } on Exception catch (e) {
-  //     return Failure(e);
-  //   }
-  // }
-
-  Result<UnmodifiableListView<Memo>> getMemos() {
+  Future<Result<void>> refresh() async {
     try {
-      final result = UnmodifiableListView(_memos.values);
+      final Result<Map<int, Memo>> result = await _memoService.getMemos();
+      return result.map((final success) {
+        _cachedMemos.clear();
+        _cachedMemos.addAll(success);
+        _isLoaded = true;
+        return success;
+      });
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
+  Future<Result<UnmodifiableListView<Memo>>> getMemos() async {
+    try {
+      if (!_isLoaded) {
+        final refreshResult = (await refresh()).exceptionOrNull();
+        if (refreshResult != null) {
+          return Failure(refreshResult);
+        }
+      }
+      final result = UnmodifiableListView(_cachedMemos.values);
       return Success(result);
     } on Exception catch (e) {
       return Failure(e);
     }
   }
 
-  Result<Memo> getMemo(final int id) {
+  Future<Result<Memo>> getMemo(final int id) async {
     try {
-      final Memo? result = _memos[id];
+      if (!_isLoaded) {
+        final refreshResult = (await refresh()).exceptionOrNull();
+        if (refreshResult != null) {
+          return Failure(refreshResult);
+        }
+      }
+      final result = _cachedMemos[id];
       return result == null ? Failure(Exception()) : Success(result);
     } on Exception catch (e) {
       return Failure(e);
@@ -54,9 +65,9 @@ class MemoRepository {
       newId.fold((final success) {
         switch (memo) {
           case NewMemo(:final fromNewMemo):
-            _memos[success] = fromNewMemo(id: success);
+            _cachedMemos[success] = fromNewMemo(id: success);
           case Memo():
-            _memos[success] = memo.copyWith(id: success);
+            _cachedMemos[success] = memo.copyWith(id: success);
         }
       }, (final e) => Failure(e));
       return newId;
@@ -67,7 +78,7 @@ class MemoRepository {
 
   Result<Memo> deleteMemo(final int id) {
     try {
-      final memo = _memos.remove(id);
+      final memo = _cachedMemos.remove(id);
       return memo != null ? Success(memo) : Failure(KeyNotFoundException());
     } on Exception catch (e) {
       return Failure(e);
@@ -80,9 +91,13 @@ class MemoRepository {
     required final String content,
   }) {
     try {
-      final Memo? memo = _memos[id];
+      final Memo? memo = _cachedMemos[id];
       if (memo != null) {
-        _memos[memo.id] = memo.copyWith(id: id, name: name, content: content);
+        _cachedMemos[memo.id] = memo.copyWith(
+          id: id,
+          name: name,
+          content: content,
+        );
         return Success(memo.id);
       } else {
         return Failure(KeyNotFoundException());
@@ -98,9 +113,9 @@ class MemoRepository {
     final double? fractionWordsKeep,
   }) {
     try {
-      final Memo? memo = _memos[id];
+      final Memo? memo = _cachedMemos[id];
       if (memo != null) {
-        _memos[id] = memo.copyWith(
+        _cachedMemos[id] = memo.copyWith(
           keepFirstLetters: keepFirstLetters,
           fractionWordsKeep: fractionWordsKeep,
         );
