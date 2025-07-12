@@ -5,10 +5,14 @@ import 'package:sqflite/sqflite.dart';
 import '../data/repositories/memo_repository.dart';
 import '../data/services/memo_service.dart';
 
-List<SingleChildWidget> providersLocal({required final Database db}) {
+List<SingleChildWidget> providersLocal({
+  required final DatabaseFactory databaseFactory,
+}) {
   return [
-    Provider<Database>.value(value: db),
-    Provider(create: (final context) => MemoService(db: context.read())),
+    Provider<DatabaseFactory>.value(value: databaseFactory),
+    Provider(
+      create: (final context) => MemoService(databaseFactory: context.read()),
+    ),
     Provider(
       create: (final context) => MemoRepository(memoService: context.read()),
     ),
