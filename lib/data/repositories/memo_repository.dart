@@ -7,13 +7,28 @@ import '../../domain/models/memo/memo.dart';
 import '../services/memo_service.dart';
 
 class MemoRepository {
-  MemoRepository({required final MemoService memoService});
-  // : _memoService = memoService;
+  MemoRepository({required final MemoService memoService})
+    : _memoService = memoService;
 
-  // final MemoService _memoService;
+  final MemoService _memoService;
 
   final Map<int, Memo> _memos = {};
-  int _sequentialId = 0;
+
+  // Future<Result<List<Memo>>> getMemos() async {
+  //   try {
+  //     final result = await _memoService.getMemos();
+  //     return result.fold((final success) {
+  //       final List<Map<String, Object?>> a = success;
+  //       return Success(
+  //         a.map((item))
+  //       )
+  //     }, (final e) => Failure(e));
+
+  //     // return Success(await result);
+  //   } on Exception catch (e) {
+  //     return Failure(e);
+  //   }
+  // }
 
   Result<UnmodifiableListView<Memo>> getMemos() {
     try {
@@ -33,20 +48,18 @@ class MemoRepository {
     }
   }
 
-  Result<int> createMemo({
-    final int? id,
-    required final String name,
-    required final String content,
-  }) {
+  Future<Result<int>> createMemo({required final BaseMemo memo}) async {
     try {
-      late final Memo memo;
-      if (id != null && !_memos.containsKey(id)) {
-        memo = Memo(id: id, name: name, content: content);
-      } else {
-        memo = Memo(id: _sequentialId++, name: name, content: content);
-      }
-      _memos[memo.id] = memo;
-      return Success(memo.id);
+      final Result<int> newId = await _memoService.createMemo(memo: memo);
+      newId.fold((final success) {
+        switch (memo) {
+          case NewMemo(:final fromNewMemo):
+            _memos[success] = fromNewMemo(id: success);
+          case Memo():
+            _memos[success] = memo.copyWith(id: success);
+        }
+      }, (final e) => Failure(e));
+      return newId;
     } on Exception catch (e) {
       return Failure(e);
     }
