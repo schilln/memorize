@@ -95,13 +95,13 @@ class EditorViewModel extends ChangeNotifier {
         as CommandAsync<void, Result<void>>;
   }
 
-  Result<void> _updateMemo({
+  Future<Result<void>> _updateMemo({
     required final int id,
     required final String name,
     required final String content,
-  }) {
+  }) async {
     try {
-      final result = _memoRepository.updateMemo(
+      final result = await _memoRepository.updateMemo(
         id: id,
         name: name,
         content: content,

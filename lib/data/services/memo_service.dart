@@ -97,6 +97,47 @@ class MemoService {
     }
   }
 
+  Future<Result<Memo>> getMemo({required final int id}) async {
+    try {
+      if (!isOpen()) {
+        final Exception? e = (await _open()).exceptionOrNull();
+        if (e != null) {
+          return Failure(e);
+        }
+      }
+      final Map<String, Object?> result = (await _db!.transaction((
+        final txn,
+      ) async {
+        return await txn.query(
+          _tableMemo,
+          columns: _memoCols,
+          where: '$_colId = ?',
+          whereArgs: [id],
+        );
+      })).first;
+      return Success(Memo.fromJson(result));
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
+  Future<Result<int>> updateMemo({required final Memo memo}) async {
+    try {
+      if (!isOpen()) {
+        final Exception? e = (await _open()).exceptionOrNull();
+        if (e != null) {
+          return Failure(e);
+        }
+      }
+      final int result = await _db!.transaction((final txn) async {
+        return await txn.update(_tableMemo, memo.toJson());
+      });
+      return Success(result);
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
   Future<Result<int>> deleteMemo({required final int id}) async {
     try {
       if (!isOpen()) {
