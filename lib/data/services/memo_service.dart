@@ -10,6 +10,13 @@ final String _colName = 'name';
 final String _colContent = 'content';
 final String _colKeepFirstLetters = 'keepFirstLetters';
 final String _colFractionWordsKeep = 'fractionWordsKeep';
+final List<String> _memoCols = [
+  _colId,
+  _colName,
+  _colContent,
+  _colKeepFirstLetters,
+  _colFractionWordsKeep,
+];
 
 class MemoService {
   MemoService({required final DatabaseFactory dbFactory})
@@ -60,6 +67,31 @@ class MemoService {
         return await txn.insert(_tableMemo, memo.toJson());
       });
       return Success(result);
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
+  Future<Result<Map<int, Memo>>> getMemos() async {
+    try {
+      if (!isOpen()) {
+        final Exception? e = (await _open()).exceptionOrNull();
+        if (e != null) {
+          return Failure(e);
+        }
+      }
+      final List<Map<String, Object?>> maps = await _db!.transaction((
+        final txn,
+      ) async {
+        return await txn.query(_tableMemo, columns: _memoCols);
+      });
+      final Map<int, Memo> memos = {};
+      for (final map in maps) {
+        final memo = Memo.fromJson(map);
+        memos[memo.id] = memo;
+      }
+
+      return Success(memos);
     } on Exception catch (e) {
       return Failure(e);
     }

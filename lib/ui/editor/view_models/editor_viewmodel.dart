@@ -22,7 +22,7 @@ class EditorViewModel extends ChangeNotifier {
   int? _id;
 
   late final Command<int, Result<void>> load =
-      Command.createSync<int, Result<void>>((final int id) {
+      Command.createAsync<int, Result<void>>((final int id) async {
         try {
           final result = _memoRepository.getMemo(id);
           return result.fold((final success) {
