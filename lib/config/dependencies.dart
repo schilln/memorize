@@ -10,9 +10,7 @@ List<SingleChildWidget> providersLocal({
 }) {
   return [
     Provider<DatabaseFactory>.value(value: databaseFactory),
-    Provider(
-      create: (final context) => MemoService(databaseFactory: context.read()),
-    ),
+    Provider(create: (final context) => MemoService(dbFactory: context.read())),
     Provider(
       create: (final context) => MemoRepository(memoService: context.read()),
     ),
