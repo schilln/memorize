@@ -14,6 +14,8 @@ void main() {
   testWidgets('Counter increments smoke test', (
     final WidgetTester tester,
   ) async {
+    WidgetsFlutterBinding.ensureInitialized();
+
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MainApp());
 

@@ -29,11 +29,7 @@ class HomeViewModel extends ChangeNotifier {
             initialValue: Failure(CommandNotExecutedException()),
             undo: (final UndoStack<Memo> undoStack, final reason) async {
               final memo = undoStack.pop();
-              return _createMemo(
-                id: memo.id,
-                name: memo.name,
-                content: memo.content,
-              );
+              return _undoDeleteMemo(memo: memo);
             },
             undoOnExecutionFailure: false,
           )
@@ -65,17 +61,9 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Result<int> _createMemo({
-    final int? id,
-    required final String name,
-    required final String content,
-  }) {
+  Future<Result<int>> _undoDeleteMemo({required final Memo memo}) async {
     try {
-      final newId = _memoRepository.createMemo(
-        id: id,
-        name: name,
-        content: content,
-      );
+      final newId = await _memoRepository.createMemo(memo: memo);
       return newId;
     } finally {
       load.execute();

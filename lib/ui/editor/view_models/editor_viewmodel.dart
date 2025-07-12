@@ -3,6 +3,7 @@ import 'package:flutter_command/flutter_command.dart';
 import 'package:result_dart/result_dart.dart';
 
 import '../../../data/repositories/memo_repository.dart';
+import '../../../domain/models/memo/memo.dart';
 import '../../../utils/exceptions/base.dart';
 import '../../../utils/exceptions/command.dart';
 
@@ -55,6 +56,7 @@ class EditorViewModel extends ChangeNotifier {
     return command.value;
   }
 
+  // TODO: Rework use of command (see stash).
   CommandAsync<void, Result<int>> _makeCreateMemoCommand({
     required final String name,
     required final String content,
@@ -66,14 +68,17 @@ class EditorViewModel extends ChangeNotifier {
         as CommandAsync<void, Result<int>>;
   }
 
-  Result<int> _createMemo({
+  Future<Result<int>> _createMemo({
     required final String name,
     required final String content,
-  }) {
+  }) async {
     try {
-      final id = _memoRepository.createMemo(name: name, content: content);
+      final id = await _memoRepository.createMemo(
+        memo: NewMemo(name: name, content: content),
+      );
       return id;
     } finally {
+      // TODO: Is this needed?
       notifyListeners();
     }
   }
@@ -103,6 +108,7 @@ class EditorViewModel extends ChangeNotifier {
       );
       return result;
     } finally {
+      // TODO: Is this needed?
       notifyListeners();
     }
   }
