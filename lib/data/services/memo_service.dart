@@ -64,7 +64,7 @@ class MemoService {
         }
       }
       final int result = await _db!.transaction((final txn) async {
-        return await txn.insert(_tableMemo, memo.toJson());
+        return await txn.insert(_tableMemo, _jsonFromMemo(memo.toJson()));
       });
       return Success(result);
     } on Exception catch (e) {
@@ -87,7 +87,7 @@ class MemoService {
       });
       final Map<int, Memo> memos = {};
       for (final map in maps) {
-        final memo = Memo.fromJson(map);
+        final memo = Memo.fromJson(_memoFromJson(map));
         memos[memo.id] = memo;
       }
 
@@ -115,13 +115,19 @@ class MemoService {
           whereArgs: [id],
         );
       })).first;
-      return Success(Memo.fromJson(result));
+      return Success(Memo.fromJson(_memoFromJson(result)));
     } on Exception catch (e) {
       return Failure(e);
     }
   }
 
-  Future<Result<int>> updateMemo({required final Memo memo}) async {
+  Future<Result<int>> updateMemo({
+    required final int id,
+    final String? name,
+    final String? content,
+    final bool? keepFirstLetters,
+    final double? fractionWordsKeep,
+  }) async {
     try {
       if (!isOpen()) {
         final Exception? e = (await _open()).exceptionOrNull();
@@ -129,8 +135,29 @@ class MemoService {
           return Failure(e);
         }
       }
+
+      Map<String, Object?> updateData = {};
+      if (name != null) updateData[_colName] = name;
+      if (content != null) updateData[_colContent] = content;
+      if (keepFirstLetters != null) {
+        updateData[_colKeepFirstLetters] = keepFirstLetters;
+      }
+      if (fractionWordsKeep != null) {
+        updateData[_colFractionWordsKeep] = fractionWordsKeep;
+      }
+      updateData = _jsonFromMemo(updateData);
+
+      if (updateData.isEmpty) {
+        return Success(0);
+      }
+
       final int result = await _db!.transaction((final txn) async {
-        return await txn.update(_tableMemo, memo.toJson());
+        return await txn.update(
+          _tableMemo,
+          updateData,
+          where: '$_colId = ?',
+          whereArgs: [id],
+        );
       });
       return Success(result);
     } on Exception catch (e) {
@@ -158,4 +185,22 @@ class MemoService {
       return Failure(e);
     }
   }
+}
+
+Map<String, Object?> _memoFromJson(Map<String, Object?> json) {
+  json = Map<String, Object?>.from(json);
+  final keepFirstLetters = json[_colKeepFirstLetters];
+  if (keepFirstLetters is int) {
+    json[_colKeepFirstLetters] = keepFirstLetters == 1;
+  }
+  return json;
+}
+
+Map<String, Object?> _jsonFromMemo(Map<String, Object?> memo) {
+  memo = Map<String, Object?>.from(memo);
+  final keepFirstLetters = memo[_colKeepFirstLetters];
+  if (keepFirstLetters is bool) {
+    memo[_colKeepFirstLetters] = keepFirstLetters ? 1 : 0;
+  }
+  return memo;
 }

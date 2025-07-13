@@ -90,12 +90,18 @@ class MemoRepository {
 
   Future<Result<void>> updateMemo({
     required final int id,
-    required final String name,
-    required final String content,
+    final String? name,
+    final String? content,
+    final bool? keepFirstLetters,
+    final double? fractionWordsKeep,
   }) async {
     try {
       final result = await _memoService.updateMemo(
-        memo: Memo(id: id, name: name, content: content),
+        id: id,
+        name: name,
+        content: content,
+        keepFirstLetters: keepFirstLetters,
+        fractionWordsKeep: fractionWordsKeep,
       );
       return result.map((final success) async {
         final updated = await _memoService.getMemo(id: id);
@@ -104,27 +110,6 @@ class MemoRepository {
           return Success.unit();
         });
       });
-    } on Exception catch (e) {
-      return Failure(e);
-    }
-  }
-
-  Result<void> updateMemoMemorizeState({
-    required final int id,
-    final bool? keepFirstLetters,
-    final double? fractionWordsKeep,
-  }) {
-    try {
-      final Memo? memo = _cachedMemos[id];
-      if (memo != null) {
-        _cachedMemos[id] = memo.copyWith(
-          keepFirstLetters: keepFirstLetters,
-          fractionWordsKeep: fractionWordsKeep,
-        );
-        return Success.unit();
-      } else {
-        return Failure(KeyNotFoundException());
-      }
     } on Exception catch (e) {
       return Failure(e);
     }

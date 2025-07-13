@@ -27,8 +27,8 @@ class MemorizeViewModel extends ChangeNotifier {
       }, initialValue: Failure(CommandNotExecutedException()))..execute();
 
   late final Command<void, Result<void>> saveMemorizeState =
-      Command.createSyncNoParam<Result<void>>(() {
-        return _memoRepository.updateMemoMemorizeState(
+      Command.createAsyncNoParam<Result<void>>(() async {
+        return await _memoRepository.updateMemo(
           id: _memo.id,
           keepFirstLetters: keepFirstLetters,
           fractionWordsKeep: fractionWordsKeep,
