@@ -62,15 +62,15 @@ class MemoRepository {
   Future<Result<int>> createMemo({required final BaseMemo memo}) async {
     try {
       final Result<int> newId = await _memoService.createMemo(memo: memo);
-      newId.fold((final success) {
+      return newId.map((final success) {
         switch (memo) {
           case NewMemo():
             _cachedMemos[success] = memo.fromNewMemo(id: success);
           case Memo():
             _cachedMemos[success] = memo.copyWith(id: success);
         }
-      }, (final e) => Failure(e));
-      return newId;
+        return success;
+      });
     } on Exception catch (e) {
       return Failure(e);
     }
