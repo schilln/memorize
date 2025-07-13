@@ -21,52 +21,40 @@ class EditorViewModel extends ChangeNotifier {
   final _contentController = TextEditingController();
   int? _id;
 
-  late final Command<int, Result<void>> load =
+  late final CommandAsync<int, Result<void>> load =
       Command.createAsync<int, Result<void>>((final int id) async {
-        try {
-          final result = _memoRepository.getMemo(id);
-          return result.fold((final success) {
-            _id = success.id;
-            _nameController.text = success.name;
-            _contentController.text = success.content;
-            return Success.unit();
-          }, (final e) => Failure(e));
-        } on Exception catch (e) {
-          return Failure(e);
-        }
-      }, initialValue: Failure(CommandNotExecutedException()));
+            try {
+              final result = _memoRepository.getMemo(id);
+              return result.fold((final success) {
+                _id = success.id;
+                _nameController.text = success.name;
+                _contentController.text = success.content;
+                return Success.unit();
+              }, (final e) => Failure(e));
+            } on Exception catch (e) {
+              return Failure(e);
+            }
+          }, initialValue: Failure(CommandNotExecutedException()))
+          as CommandAsync<int, Result<void>>;
 
-  Future<Result<void>> save() async {
-    final name = nameController.text;
-    final content = contentController.text;
+  late final CommandAsync<void, Result<void>> save =
+      Command.createAsyncNoParam<Result<void>>(() async {
+            final name = nameController.text;
+            final content = contentController.text;
 
-    if (name.trim().isEmpty || content.trim().isEmpty) {
-      return Failure(
-        SimpleMessageException('Name and content must not be empty.'),
-      );
-    }
+            if (name.trim().isEmpty || content.trim().isEmpty) {
+              return Failure(
+                SimpleMessageException('Name and content must not be empty.'),
+              );
+            }
 
-    late final CommandAsync<void, Result<void>> command;
-    if (_id == null) {
-      command = _makeCreateMemoCommand(name: name, content: content);
-    } else {
-      command = _makeUpdateMemoCommand(id: _id!, name: name, content: content);
-    }
-    await command.executeWithFuture();
-    return command.value;
-  }
-
-  // TODO: Rework use of command (see stash).
-  CommandAsync<void, Result<int>> _makeCreateMemoCommand({
-    required final String name,
-    required final String content,
-  }) {
-    return Command.createAsyncNoParam<Result<int>>(
-          () async => _createMemo(name: name, content: content),
-          initialValue: Failure(CommandNotExecutedException()),
-        )
-        as CommandAsync<void, Result<int>>;
-  }
+            if (_id != null) {
+              return _updateMemo(id: _id!, name: name, content: content);
+            } else {
+              return _createMemo(name: name, content: content);
+            }
+          }, initialValue: Failure(CommandNotExecutedException()))
+          as CommandAsync<void, Result<void>>;
 
   Future<Result<int>> _createMemo({
     required final String name,
@@ -81,18 +69,6 @@ class EditorViewModel extends ChangeNotifier {
       // TODO: Is this needed?
       notifyListeners();
     }
-  }
-
-  CommandAsync<void, Result<void>> _makeUpdateMemoCommand({
-    required final int id,
-    required final String name,
-    required final String content,
-  }) {
-    return Command.createAsyncNoParam<Result<void>>(
-          () async => _updateMemo(id: id, name: name, content: content),
-          initialValue: Failure(CommandNotExecutedException()),
-        )
-        as CommandAsync<void, Result<void>>;
   }
 
   Future<Result<void>> _updateMemo({
