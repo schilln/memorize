@@ -60,15 +60,10 @@ class EditorViewModel extends ChangeNotifier {
     required final String name,
     required final String content,
   }) async {
-    try {
-      final id = await _memoRepository.createMemo(
-        memo: NewMemo(name: name, content: content),
-      );
-      return id;
-    } finally {
-      // TODO: Is this needed?
-      notifyListeners();
-    }
+    final id = await _memoRepository.createMemo(
+      memo: NewMemo(name: name, content: content),
+    );
+    return id;
   }
 
   Future<Result<void>> _updateMemo({
@@ -76,17 +71,12 @@ class EditorViewModel extends ChangeNotifier {
     required final String name,
     required final String content,
   }) async {
-    try {
-      final result = await _memoRepository.updateMemo(
-        id: id,
-        name: name,
-        content: content,
-      );
-      return result;
-    } finally {
-      // TODO: Is this needed?
-      notifyListeners();
-    }
+    final result = await _memoRepository.updateMemo(
+      id: id,
+      name: name,
+      content: content,
+    );
+    return result;
   }
 
   @override
