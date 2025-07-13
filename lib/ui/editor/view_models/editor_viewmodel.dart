@@ -25,12 +25,12 @@ class EditorViewModel extends ChangeNotifier {
       Command.createAsync<int, Result<void>>((final int id) async {
             try {
               final result = _memoRepository.getMemo(id);
-              return result.fold((final success) {
+              return result.map((final success) {
                 _id = success.id;
                 _nameController.text = success.name;
                 _contentController.text = success.content;
                 return Success.unit();
-              }, (final e) => Failure(e));
+              });
             } on Exception catch (e) {
               return Failure(e);
             }

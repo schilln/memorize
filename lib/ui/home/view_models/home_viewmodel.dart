@@ -40,10 +40,10 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<Result<void>> _load() async {
     final result = await _memoRepository.getMemos();
-    return result.fold((final success) {
+    return result.map((final success) {
       _memos = success;
       return Success.unit();
-    }, (final e) => Failure(e));
+    });
   }
 
   Future<Result<void>> _deleteMemo({
@@ -52,10 +52,10 @@ class HomeViewModel extends ChangeNotifier {
   }) async {
     try {
       final memo = _memoRepository.deleteMemo(id: id);
-      return await memo.fold((final success) {
+      return await memo.map((final success) {
         undoStack.push(success);
         return Success.unit();
-      }, (final e) => Failure(e));
+      });
     } finally {
       load.execute();
     }

@@ -17,13 +17,10 @@ class MemorizeViewModel extends ChangeNotifier {
 
   late final Command<void, Result<Memo>> load =
       Command.createAsyncNoParam<Result<Memo>>(() async {
-        final Result<Memo> result = await _memoRepository.getMemo(_id).fold((
-          final success,
-        ) {
+        return await _memoRepository.getMemo(_id).map((final success) {
           _memo = success;
-          return Success(_memo);
-        }, (final e) => Failure(e));
-        return result;
+          return _memo;
+        });
       }, initialValue: Failure(CommandNotExecutedException()))..execute();
 
   late final Command<void, Result<void>> saveMemorizeState =
