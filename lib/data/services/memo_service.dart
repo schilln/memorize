@@ -22,39 +22,6 @@ class MemoService {
   MemoService({required final DatabaseFactory dbFactory})
     : _dbFactory = dbFactory;
 
-  bool isOpen() => _db != null;
-
-  final DatabaseFactory _dbFactory;
-  Database? _db;
-
-  Future<Result<void>> _open() async {
-    final String path = join(
-      await _dbFactory.getDatabasesPath(),
-      'app_database.db',
-    );
-    try {
-      _db = await _dbFactory.openDatabase(
-        path,
-        options: OpenDatabaseOptions(
-          version: 1,
-          onCreate: (final Database db, final int version) async {
-            await db.execute('''
-            CREATE TABLE IF NOT EXISTS $_tableMemo(
-              $_colId INTEGER PRIMARY KEY AUTOINCREMENT, 
-              $_colName TEXT NOT NULL, 
-              $_colContent TEXT NOT NULL, 
-              $_colKeepFirstLetters INT, 
-              $_colFractionWordsKeep REAL
-            )''');
-          },
-        ),
-      );
-      return Success.unit();
-    } on Exception catch (e) {
-      return Failure(e);
-    }
-  }
-
   Future<Result<int>> createMemo({required final BaseMemo memo}) async {
     try {
       if (!isOpen()) {
@@ -181,6 +148,39 @@ class MemoService {
         );
       });
       return Success(result);
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
+  bool isOpen() => _db != null;
+
+  final DatabaseFactory _dbFactory;
+  Database? _db;
+
+  Future<Result<void>> _open() async {
+    final String path = join(
+      await _dbFactory.getDatabasesPath(),
+      'app_database.db',
+    );
+    try {
+      _db = await _dbFactory.openDatabase(
+        path,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (final Database db, final int version) async {
+            await db.execute('''
+            CREATE TABLE IF NOT EXISTS $_tableMemo(
+              $_colId INTEGER PRIMARY KEY AUTOINCREMENT, 
+              $_colName TEXT NOT NULL, 
+              $_colContent TEXT NOT NULL, 
+              $_colKeepFirstLetters INT, 
+              $_colFractionWordsKeep REAL
+            )''');
+          },
+        ),
+      );
+      return Success.unit();
     } on Exception catch (e) {
       return Failure(e);
     }
