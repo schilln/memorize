@@ -16,7 +16,7 @@ sealed class BaseMemo {
   final bool? keepFirstLetters;
   final double? fractionWordsKeep;
 
-  Map<String, dynamic> toJson();
+  Map<String, Object?> toJson();
 }
 
 @freezed
@@ -35,7 +35,7 @@ abstract class NewMemo extends BaseMemo with _$NewMemo {
     final double? fractionWordsKeep,
   }) = _NewMemo;
 
-  factory NewMemo.fromJson(final Map<String, dynamic> json) =>
+  factory NewMemo.fromJson(final Map<String, Object?> json) =>
       _$NewMemoFromJson(json);
 
   Memo fromNewMemo({required final int id}) {
@@ -60,6 +60,6 @@ abstract class Memo extends BaseMemo with _$Memo {
     final double? fractionWordsKeep,
   }) = _Memo;
 
-  factory Memo.fromJson(final Map<String, dynamic> json) =>
+  factory Memo.fromJson(final Map<String, Object?> json) =>
       _$MemoFromJson(json);
 }
