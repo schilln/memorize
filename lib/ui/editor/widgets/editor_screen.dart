@@ -88,7 +88,7 @@ class ButtonRow extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () async {
-            final result = await viewModel.save();
+            final result = await viewModel.save.executeWithFuture();
             result.fold(
               (final success) {
                 if (context.mounted) context.go(Routes.home);
