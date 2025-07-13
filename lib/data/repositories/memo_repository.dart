@@ -29,6 +29,23 @@ class MemoRepository {
     }
   }
 
+  Future<Result<int>> createMemo({required final BaseMemo memo}) async {
+    try {
+      final Result<int> newId = await _memoService.createMemo(memo: memo);
+      return newId.map((final success) {
+        switch (memo) {
+          case NewMemo():
+            _cachedMemos[success] = memo.fromNewMemo(id: success);
+          case Memo():
+            _cachedMemos[success] = memo.copyWith(id: success);
+        }
+        return success;
+      });
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
   Future<Result<UnmodifiableListView<Memo>>> getMemos() async {
     try {
       if (!_isLoaded) {
@@ -59,35 +76,6 @@ class MemoRepository {
     }
   }
 
-  Future<Result<int>> createMemo({required final BaseMemo memo}) async {
-    try {
-      final Result<int> newId = await _memoService.createMemo(memo: memo);
-      return newId.map((final success) {
-        switch (memo) {
-          case NewMemo():
-            _cachedMemos[success] = memo.fromNewMemo(id: success);
-          case Memo():
-            _cachedMemos[success] = memo.copyWith(id: success);
-        }
-        return success;
-      });
-    } on Exception catch (e) {
-      return Failure(e);
-    }
-  }
-
-  Future<Result<Memo>> deleteMemo({required final int id}) async {
-    try {
-      final result = await _memoService.deleteMemo(id: id);
-      return result.flatMap((final success) {
-        final memo = _cachedMemos.remove(id);
-        return memo != null ? Success(memo) : Failure(KeyNotFoundException());
-      });
-    } on Exception catch (e) {
-      return Failure(e);
-    }
-  }
-
   Future<Result<void>> updateMemo({
     required final int id,
     final String? name,
@@ -109,6 +97,18 @@ class MemoRepository {
           _cachedMemos[id] = success;
           return Success.unit();
         });
+      });
+    } on Exception catch (e) {
+      return Failure(e);
+    }
+  }
+
+  Future<Result<Memo>> deleteMemo({required final int id}) async {
+    try {
+      final result = await _memoService.deleteMemo(id: id);
+      return result.flatMap((final success) {
+        final memo = _cachedMemos.remove(id);
+        return memo != null ? Success(memo) : Failure(KeyNotFoundException());
       });
     } on Exception catch (e) {
       return Failure(e);

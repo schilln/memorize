@@ -15,12 +15,6 @@ class EditorViewModel extends ChangeNotifier {
   TextEditingController get nameController => _nameController;
   TextEditingController get contentController => _contentController;
 
-  final MemoRepository _memoRepository;
-
-  final _nameController = TextEditingController();
-  final _contentController = TextEditingController();
-  int? _id;
-
   late final CommandAsync<int, Result<void>> load =
       Command.createAsync<int, Result<void>>((final int id) async {
             try {
@@ -55,6 +49,12 @@ class EditorViewModel extends ChangeNotifier {
             }
           }, initialValue: Failure(CommandNotExecutedException()))
           as CommandAsync<void, Result<void>>;
+
+  final MemoRepository _memoRepository;
+
+  final _nameController = TextEditingController();
+  final _contentController = TextEditingController();
+  int? _id;
 
   Future<Result<int>> _createMemo({
     required final String name,

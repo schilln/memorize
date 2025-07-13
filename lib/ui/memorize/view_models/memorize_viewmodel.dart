@@ -57,17 +57,11 @@ class MemorizeViewModel extends ChangeNotifier {
     return result.join('');
   }
 
-  ValueListenable<double> get fractionWordsKeepListenable =>
-      _fractionWordsKeepNotifier as ValueListenable<double>;
   ValueListenable<bool> get keepFirstLettersListenable =>
       _keepFirstLettersNotifier as ValueListenable<bool>;
 
-  double get fractionWordsKeep => _fractionWordsKeepNotifier.value;
-  set fractionWordsKeep(final double value) {
-    if (_fractionWordsKeepNotifier.value != value && 0 <= value && value <= 1) {
-      _fractionWordsKeepNotifier.value = value;
-    }
-  }
+  ValueListenable<double> get fractionWordsKeepListenable =>
+      _fractionWordsKeepNotifier as ValueListenable<double>;
 
   bool get keepFirstLetters => _keepFirstLettersNotifier.value;
   set keepFirstLetters(final bool value) {
@@ -76,9 +70,17 @@ class MemorizeViewModel extends ChangeNotifier {
     }
   }
 
+  double get fractionWordsKeep => _fractionWordsKeepNotifier.value;
+  set fractionWordsKeep(final double value) {
+    if (_fractionWordsKeepNotifier.value != value && 0 <= value && value <= 1) {
+      _fractionWordsKeepNotifier.value = value;
+    }
+  }
+
   late final ValueNotifier<bool> _keepFirstLettersNotifier = ValueNotifier(
     _memo.keepFirstLetters ?? false,
   );
+
   late final ValueNotifier<double> _fractionWordsKeepNotifier = ValueNotifier(
     _memo.fractionWordsKeep ?? 0,
   );
