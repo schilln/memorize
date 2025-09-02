@@ -1,16 +1,17 @@
 # memorize
 
-A new Flutter project.
+This app is meant to help with memorizing passages of text.
 
-## Getting Started
+It was also a fun experience to use the [Dart](https://dart.dev/) language and the [Flutter](https://flutter.dev/) framework to develop my first app.
 
-This project is a starting point for a Flutter application.
+There remains work to be done of course.
+The architecture could probably be improved, though I tried to follow the [Model-View-ViewModel](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) (MVVM) approach along with the [Flutter tutorial](https://docs.flutter.dev/get-started/fundamentals) and other resources.
+I'd like to implement some network connectivity, such as backing up to Google Drive.
+A (unit) testing suite would be a good idea.
+And for now the app exists only here with a "debug" version on my phone; when I have some time to polish things up I'd like to get this onto Google Play.
 
-A few resources to get you started if this is your first Flutter project:
+## Screenshots
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+|   |   |   |
+|---|---|---|
+| ![Home screen](doc/screenshots/home.png) | ![Passage with first letters omitted](doc/screenshots/no_first_letters.png) | ![Passage with first letters included](doc/screenshots/first_letters.png) |
